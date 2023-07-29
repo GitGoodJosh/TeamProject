@@ -1,3 +1,4 @@
+import os
 import pygame
 from pygameClasses import tank
 from pygameClasses import fighter
@@ -10,10 +11,10 @@ screensize = (1824, 932)
 pygame.display.set_mode(screensize)
 pygame.display.set_caption(" GAME ")
 # load all images after this line
-BGimage = pygame.image.load("C:\\Users\\aryav\\OneDrive\\Desktop\\.vscode\\pygameBG.PNG").convert_alpha()
-TANKimage = pygame.image.load("C:\\Users\\aryav\\OneDrive\\Desktop\\.vscode\\pygameTANK.PNG").convert_alpha()
-FIGHTERimage = pygame.image.load("C:\\Users\\aryav\\OneDrive\\Desktop\\.vscode\\pygameFIGHTER.PNG").convert_alpha()
-HEALERimage = pygame.image.load("C:\\Users\\aryav\\OneDrive\\Desktop\\.vscode\\pygameHEALER.PNG").convert_alpha()
+BGimage = pygame.image.load(os.path.join('Assets','pygameBG.png')).convert_alpha()
+TANKimage = pygame.image.load(os.path.join('Assets','pygameBG.png')).convert_alpha()
+FIGHTERimage = pygame.image.load(os.path.join('Assets','pygameBG.png')).convert_alpha()
+HEALERimage = pygame.image.load(os.path.join('Assets','pygameBG.png')).convert_alpha()
 # load all images before this line
 # ------------------------------------------------- #
 
