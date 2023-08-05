@@ -9,17 +9,32 @@ pygame.init()
 screensize = (1000, 600)
 # note: used 1824x932 because thats the size of the pic
 # if changing bg pic remember to change size to fit 
-
+#TeamGame\TeamProject\Assets\pygameBACKGROUND.png
 pygame.display.set_mode(screensize)
 pygame.display.set_caption(" GAME ")
+# Image Load Function
+def LoadImg(img):
+    return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
+
+def FlipImg(img, Ver:bool, Hori:bool):
+    return pygame.transform.flip(img,Ver,Hori)
+
 # load all images after this line
-BGimage = pygame.image.load(os.path.join('Assets','pygameBACKGROUND.png')).convert_alpha()
-TANKimage = pygame.image.load(os.path.join('Assets','pygameTANK.png')).convert_alpha()
-FIGHTERimage = pygame.image.load(os.path.join('Assets','pygameFIGHTER.png')).convert_alpha()
-HEALERimage = pygame.image.load(os.path.join('Assets','pygameHEALER.png')).convert_alpha()
+Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
+BGimage = LoadImg('pygameBACKGROUND.png')
+TANKimage = LoadImg('pygameTANK.png')
+FIGHTERimage = LoadImg('pygameFIGHTER.png')
+HEALERimage = LoadImg('pygameHEALER.png')
+FIGHTERimageAI = FlipImg(TANKimage,True,False)
+TANKimageAI = FlipImg(TANKimage, True, False)
+HEALERimageAI = FlipImg(HEALERimage, True, False)
+"""
 FIGHTERimageAI = pygame.transform.flip(FIGHTERimage, True, False)
 TANKimageAI = pygame.transform.flip(TANKimage, True, False)
 HEALERimageAI = pygame.transform.flip(HEALERimage, True, False)
+"""
+
+
 # load all images before this line
 # ------------------------------------------------- #
 ## T is first tank F is first fighter
@@ -27,7 +42,6 @@ HEALERimageAI = pygame.transform.flip(HEALERimage, True, False)
 # F = fighter(600, 600, 150, 50, 10)
 
 
-    
 
 
 # print BG and characters
