@@ -2,6 +2,7 @@ import os
 import time
 import pygame
 from pygameClasses import cleric, tank, fighter, character
+
 pygame.init()
 # need list for pygame height and width (cannot usse two separate numbers)
 screensize = (1000, 600)
@@ -26,7 +27,7 @@ HEALERimage = LoadImg('pygameHEALER.png')
 FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
 TANKimageAI = FlipImg(TANKimage, True, False)
 HEALERimageAI = FlipImg(HEALERimage, True, False)
-
+startButton = LoadImg('startButton')
 
 
 
@@ -45,6 +46,14 @@ AICleric = cleric(870, 450, 120, 20, 10)
 # print BG and characters
 screen = pygame.display.get_surface()
 screen.blit(BGimage, (0,0))
+screen.blit(FIGHTERimage, (0,150))
+screen.blit(TANKimage, (100,300))
+screen.blit(HEALERimage, (0,450))
+screen.blit(FIGHTERimageAI, (850,150))
+screen.blit(TANKimageAI, (750,300))
+screen.blit(HEALERimageAI, (870,450))
+pygame.display.flip()
+
 def blitAllexcept(exception):
     if exception == FIGHTERimage:   
         screen.blit(BGimage, (0,0))
@@ -96,12 +105,9 @@ def blitAllexcept(exception):
         screen.blit(TANKimageAI, (750,300))
         
 
-pygame.display.flip()
 
 
-def move(CHARACTERx, CHARACTERy, targetX, targetY, CHARACTERimage):
-
-
+def move(CHARACTERimage, CHARACTERx, CHARACTERy, targetX, targetY):
     originalX = CHARACTERx
     originalY = CHARACTERy
 
@@ -116,36 +122,22 @@ def move(CHARACTERx, CHARACTERy, targetX, targetY, CHARACTERimage):
     screen.blit(CHARACTERimage, (originalX, originalY))
     pygame.display.flip()
 
-'''
-# testing fighter take dmg from tank hp = 150 - (30 - 10)
-print(playerFighter.takeDMG(AITank.applyDMG()))
-# yes
-#testing if tank takes dmg properly output should be 200 - (50 - 20) = 170
-print(AITank.takeDMG(playerFighter.applyDMG()))
-#yes
-# test if tank updates self.hp after taking hit (should show 170, 140, 110, 80...)
-print(AITank.takeDMG(playerFighter.applyDMG()))
-print(AITank.takeDMG(playerFighter.applyDMG()))
-print(AITank.takeDMG(playerFighter.applyDMG()))
 
-# yes
-#test heal (1/4 of lost hp)
-AITank.healHP()
-print(AITank.hpCurrent)
-# yes            
-'''
 
 
             
 
 
-    
+(mouseX, mouseY) = pygame.mouse.get_pos()
+
 
 clock = pygame.time.Clock()
 running = True 
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
-    move(playerFighter.xCoordOf(), playerFighter.yCoordOf(), AITank.xCoordOf(), AITank.yCoordOf(), FIGHTERimage)
+    clock.tick(60)
+    screen.blit("text", (0, 0) )
+    move(FIGHTERimage, playerFighter.xCoordOf(), playerFighter.yCoordOf(), AITank.xCoordOf(), AITank.yCoordOf())
     pygame.display.flip()
     
 
