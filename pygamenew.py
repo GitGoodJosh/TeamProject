@@ -1,6 +1,7 @@
 import os
 import time
 import pygame
+import sys 
 from pygameClasses import cleric, tank, fighter, character
 
 pygame.init()
@@ -27,8 +28,10 @@ HEALERimage = LoadImg('pygameHEALER.png')
 FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
 TANKimageAI = FlipImg(TANKimage, True, False)
 HEALERimageAI = FlipImg(HEALERimage, True, False)
-startButton = LoadImg('startButton')
-
+startButton = LoadImg('startButton.png')
+attackButton = LoadImg('attackButton.png')
+healButton = LoadImg('healButton.png')
+startButton = pygame.transform.scale(startButton, (110,90))
 
 
 # load all images before this line
@@ -130,14 +133,16 @@ def move(CHARACTERimage, CHARACTERx, CHARACTERy, targetX, targetY):
 
 (mouseX, mouseY) = pygame.mouse.get_pos()
 
-
+pygame.display.flip()
 clock = pygame.time.Clock()
 running = True 
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
     clock.tick(60)
-    screen.blit("text", (0, 0) )
-    move(FIGHTERimage, playerFighter.xCoordOf(), playerFighter.yCoordOf(), AITank.xCoordOf(), AITank.yCoordOf())
+    screen.blit(startButton, (450, 300))
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and 450 < mouseX < 540 and 300 < mouseY < 390:
+            move(FIGHTERimage, playerFighter.xCoordOf(), playerFighter.yCoordOf(), AITank.xCoordOf(), AITank.yCoordOf())
     pygame.display.flip()
     
 
