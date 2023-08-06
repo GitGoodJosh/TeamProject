@@ -5,8 +5,11 @@ import pygameClasses
 from pygameClasses import tank
 from pygameClasses import fighter
 pygame.init()
+
 # need list for pygame height and width (cannot usse two separate numbers)
+
 screensize = (1000, 600)
+
 # note: used 1824x932 because thats the size of the pic
 # if changing bg pic remember to change size to fit 
 #TeamGame\TeamProject\Assets\pygameBACKGROUND.png
@@ -49,15 +52,19 @@ HEALERimageAI = pygame.transform.flip(HEALERimage, True, False)
 # F = fighter(600, 600, 150, 50, 10)
 
 f1 = pygameClasses.fighter(0,150,200,100,5,FIGHTERimage)
+T1 = pygameClasses.tank(100,300,300,100,5,TANKimage)
 
 
 # print BG and characters
 screen = pygame.display.get_surface()
 screen.blit(BGimage, (0,0))
+
+
+
 def setup(exception):
     if exception == "Base":
         f1.Blitz()
-        screen.blit(TANKimage, (100,300))
+        T1.Blitz()
         screen.blit(HEALERimage, (0,450))
         screen.blit(FIGHTERimageAI, (850,150))
         screen.blit(TANKimageAI, (750,300))
@@ -65,7 +72,7 @@ def setup(exception):
         
     elif exception == FIGHTERimage:   
         screen.blit(BGimage, (0,0))
-        screen.blit(TANKimage, (100,300))
+        T1.Blitz()
         screen.blit(HEALERimage, (0,450))
         screen.blit(FIGHTERimageAI, (850,150))
         screen.blit(TANKimageAI, (750,300))
@@ -73,7 +80,7 @@ def setup(exception):
 
     elif exception == TANKimage:
         screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
+        f1.Blitz()
         screen.blit(HEALERimage, (0,450))
         screen.blit(FIGHTERimageAI, (850,150))
         screen.blit(TANKimageAI, (750,300))
