@@ -3,6 +3,8 @@ import time
 import pygame
 import sys 
 import pygameClasses
+import math
+import random
 
 pygame.init()
 # need list for pygame height and width (cannot usse two separate numbers)
@@ -23,7 +25,7 @@ def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
 Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
 BGimage = LoadImg('pygameBACKGROUND.png')
 TANKimage = LoadImg('pygameTANK.png')
-FIGHTERimage = LoadImg('pygameFIGHTER.png')
+FIGHTERimage = LoadImg('pygameFIGHTER.png') # 142 x 153
 HEALERimage = LoadImg('pygameHEALER.png')
 FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
 TANKimageAI = FlipImg(TANKimage, True, False)
@@ -37,7 +39,8 @@ startButton = pygame.transform.scale(startButton, (110,90))
 # load all images before this line
 # ------------------------------------------------- #
 
-playerFighter = pygameClasses.character(0, 150, 150, 50, 10, FIGHTERimage )
+
+playerFighter = pygameClasses.character(0, 150, 150, 50, 10, FIGHTERimage)
 playerTank = pygameClasses.character(100, 300, 200, 30, 20, TANKimage)
 playerCleric = pygameClasses.character(0, 450, 120, 20, 10, HEALERimage)
 AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI)
@@ -146,18 +149,43 @@ def move(attacker, defender):
 
             
 gamestate = 1
+# gamestate 1 = waiting, gamsestate 0 = players attack, gamestate 2 = ai attack
 
 (mouseX, mouseY) = pygame.mouse.get_pos()
 
 pygame.display.flip()
 clock = pygame.time.Clock()
 running = True 
+turn = 0  
+playerList = [playerFighter, playerTank, playerCleric]   
+AIlist = [AIFighter, AITank, AICleric] 
+index = 0
+def CurrAttacker():
+    global index
+
+    if index%2 == 0:
+        attacker = playerList[int(index/2)]
+    if index%2 == 1:
+        attacker = AIlist[int(math.ceil(index/2)) - 1]
+    if index > 6:
+        index = 0
+    print("ii",index)
+    return attacker
+
+    
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
 
     if gamestate == 1:
         blitAllexcept(None)
         pygame.display.flip()
+    elif gamestate == 2:
+        chosen = random.randint(0,2)
+        move(CurrAttacker(), playerList[chosen])
+        playerList[chosen].takeDMG(CurrAttacker().attack)
+        gamestate = 1
+        index += 1
+        turn += 1
 
 
     for event in pygame.event.get():
@@ -167,18 +195,32 @@ while running == True:
         
         if event.type == pygame.KEYDOWN:
             
-            if event.key == pygame.K_w:
-                GameState = 0
-                move(playerFighter, AITank)
+            if event.key == pygame.K_1:
+                gamestate = 0
+                move(CurrAttacker(), AIlist[0])
                 
 
-                GameState = 1
-                AITank.takeDMG(playerFighter.attack)
+                gamestate = 2
+                AIlist[0].takeDMG(CurrAttacker().attack)
+            
+            if event.key == pygame.K_2:
+                gamestate = 0
+                move(CurrAttacker(), AIlist[1])  
+
+                gamestate = 2
+                AIlist[1].takeDMG(CurrAttacker().attack)
+
+            if event.key == pygame.K_3:
+                gamestate = 0
+                move(CurrAttacker(), AIlist[2])      
                 
-            '''
-            if event.key ==pygame.K_s:
-                move(FIGHTERimageAI, AIFighter.xCoordOf(), AIFighter.yCoordOf(), playerTank.xCoordOf(), playerTank.yCoordOf())
-                GameState = 1'''
+
+                gamestate = 2
+                AIlist[2].takeDMG(CurrAttacker().attack)
+            turn += 1
+            print(turn)
+
+
 
 
 

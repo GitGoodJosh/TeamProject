@@ -44,6 +44,7 @@ class character():
         self.image = charImage
     def takeDMG(self, attackApplied):
         self.hpCurrent = self.hpCurrent - (attackApplied - self.defense)
+        print(self.hpCurrent)
         return self.hpCurrent
     def healHP(self):
         self.hpCurrent = self.hpCurrent + (1/4)*(self.hpMax - self.hpCurrent) 
