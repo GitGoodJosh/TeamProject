@@ -1,77 +1,88 @@
-import pygame
 
+import pygame
+# need to load all this here to make the functions work here so the other page looks cleaner
+import time
+import os
+pygame.init()
+screensize = (1000, 600)
+pygame.display.set_mode(screensize)
+def LoadImg(img):
+    return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
+
+def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
+    return pygame.transform.flip(img, verticalFlip, horizontalFlip)
+
+# load all images after this line
+Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
+BGimage = LoadImg('pygameBACKGROUND.png')
+TANKimage = LoadImg('pygameTANK.png')
+FIGHTERimage = LoadImg('pygameFIGHTER.png')
+HEALERimage = LoadImg('pygameHEALER.png')
+FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
+TANKimageAI = FlipImg(TANKimage, True, False)
+HEALERimageAI = FlipImg(HEALERimage, True, False)
 screen = pygame.display.get_surface()
 
+
+        
+
+
+
+
+
+
+
 # define all classes here
-class character(pygame.sprite.Sprite):
-    def __init__(self, x, y, maxHp, Attack, Defense, Image):
+class character():
+    def __init__(self, x, y, maxHp, Attack, Defense, charImage):
         self.xCoord = x
         self.yCoord = y 
         self.hpMax = maxHp
         self.hpCurrent = maxHp
         self.attack = Attack
         self.defense = Defense
-        self.Image = Image
-    def move(self):
-        self.position = (self.xCoord + 10, self.yCoord + 10)
-    def applyDMG(self):
-        return self.attack
+        self.image = charImage
     def takeDMG(self, attackApplied):
         self.hpCurrent = self.hpCurrent - (attackApplied - self.defense)
         return self.hpCurrent
     def healHP(self):
-        self.hpCurrent = self.hpCurrent + (1/4)*(self.hpMax - self.hpCurrent)  
-    def Blitz(self):
-         pygame.display.get_surface().blit(self.Image, (self.xCoord , self.yCoord))
+        self.hpCurrent = self.hpCurrent + (1/4)*(self.hpMax - self.hpCurrent) 
 
+    
         
 
 # tank and assassin are child classes of character so we dont have to keep defining functions (appliedDMG/takeDMG)
-class tank(character):
-    def __init__(self, x, y, maxHp, attack, defense, Image):
-        super().__init__(x, y, maxHp, attack, defense, Image)
-
-
 class fighter(character):
-    def __init__(self, x, y, maxHp, attack, defense, Image):
-        super().__init__(x, y, maxHp, attack, defense, Image)
+    def __init__(self, x, y, maxHp, attack, defense):
+        super().__init__(x, y, maxHp, attack, defense)
 
-
-class cleric(character):
+class tank(character):
     def __init__(self, x, y, maxHp, attack, defense):
         super().__init__(x, y, maxHp, attack, defense)
 
 
-
-
-'''
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(TANKimageAI, (750,300))
-        screen.blit(HEALERimageAI, (870,450))
-
-
-'''
+class cleric(character):
+    def __init__(self, x, y, maxHp, attack, defense):
+        super().__init__( x, y, maxHp, attack, defense)
 
 
 
-''' use test in pygame file dont run here
-# testing fighter take dmg from tank hp = 150 - (30 - 10)
-print(F.takeDMG(T.applyDMG()))
+
+
+''' # testing fighter take dmg from tank hp = 150 - (30 - 10)
+print(playerFighter.takeDMG(AITank.applyDMG()))
 # yes
 #testing if tank takes dmg properly output should be 200 - (50 - 20) = 170
-print(T.takeDMG(F.applyDMG()))
+print(AITank.takeDMG(playerFighter.applyDMG()))
 #yes
 # test if tank updates self.hp after taking hit (should show 170, 140, 110, 80...)
-print(T.takeDMG(F.applyDMG()))
-print(T.takeDMG(F.applyDMG()))
-print(T.takeDMG(F.applyDMG()))
+print(AITank.takeDMG(playerFighter.applyDMG()))
+print(AITank.takeDMG(playerFighter.applyDMG()))
+print(AITank.takeDMG(playerFighter.applyDMG()))
 
 # yes
 #test heal (1/4 of lost hp)
-T.healHP()
-print(T.hpCurrent)
-# yes
+AITank.healHP()
+print(AITank.hpCurrent)
+# yes 
 '''
