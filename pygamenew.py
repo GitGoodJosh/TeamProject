@@ -1,9 +1,7 @@
 import os
 import time
 import pygame
-import sys 
 import pygameClasses
-import math
 import random
 
 pygame.init()
@@ -149,7 +147,7 @@ def move(attacker, defender):
 
             
 gamestate = 1
-# gamestate 1 = waiting, gamsestate 0 = players attack, gamestate 2 = ai attack
+# gamestate 0 = waiting, gamsestate 1 = players attack, gamestate 2 = ai attack
 
 (mouseX, mouseY) = pygame.mouse.get_pos()
 
@@ -159,33 +157,125 @@ running = True
 turn = 0  
 playerList = [playerFighter, playerTank, playerCleric]   
 AIlist = [AIFighter, AITank, AICleric] 
-index = 0
-def CurrAttacker():
-    global index
+def CurrAttacker(index):
+    global turn
+    if turn % 2 == 1:
+        return AIlist[index - 1]
+    elif turn % 2 == 0:
+        return playerList[index - 1]
 
-    if index%2 == 0:
-        attacker = playerList[int(index/2)]
-    if index%2 == 1:
-        attacker = AIlist[int(math.ceil(index/2)) - 1]
-    if index > 6:
-        index = 0
-    print("ii",index)
-    return attacker
+def CurrDefender(index):
+    global turn
+    if turn % 2 == 1:
+        return playerList[index - 1]
+    elif turn % 2 == 0:
+        return AIlist[index - 1]
+
+def playerTurn():
+    global turn, gamestate
+    PlayerHasAttacked = False
+    TargetHasBeenChosen = False
+    while PlayerHasAttacked == False:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    Attacker = CurrAttacker(1)
+                    while TargetHasBeenChosen == False:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                            elif event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_1:
+                                    Defender = CurrDefender(1)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                elif event.key == pygame.K_2:
+                                    Defender = CurrDefender(2)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                elif event.key == pygame.K_3:
+                                    Defender = CurrDefender(3)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                  
+                    PlayerHasAttacked = True         
+                elif event.key == pygame.K_2:
+                    Attacker = CurrAttacker(2)
+                    while TargetHasBeenChosen == False:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                            elif event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_1:
+                                    Defender = CurrDefender(1)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                elif event.key == pygame.K_2:
+                                    Defender = CurrDefender(2)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                elif event.key == pygame.K_3:
+                                    Defender = CurrDefender(3)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                
+                    PlayerHasAttacked = True
+                elif event.key == pygame.K_3:
+                    Attacker = CurrAttacker(3)
+                    while TargetHasBeenChosen == False:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                            elif event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_1:
+                                    Defender = CurrDefender(1)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                elif event.key == pygame.K_2:
+                                    Defender = CurrDefender(2)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True
+                                elif event.key == pygame.K_3:
+                                    Defender = CurrDefender(3)
+                                    move(Attacker, Defender)
+                                    Defender.takeDMG(Attacker.attack)
+                                    TargetHasBeenChosen = True            
+                    PlayerHasAttacked = True
+
+
+def AIturn():
+    global turn, gamestate
+    Attacker = CurrAttacker(random.randint(0,2))
+    Defender = CurrDefender(random.randint(0,2))
+    move(Attacker, Defender)
+    Defender.takeDMG(Attacker.attack)
 
     
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
 
-    if gamestate == 1:
+    if gamestate == 0:
         blitAllexcept(None)
         pygame.display.flip()
-    elif gamestate == 2:
-        chosen = random.randint(0,2)
-        move(CurrAttacker(), playerList[chosen])
-        playerList[chosen].takeDMG(CurrAttacker().attack)
-        gamestate = 1
-        index += 1
+    elif gamestate == 1:
+        playerTurn()
         turn += 1
+        gamestate = 2
+    elif gamestate == 2:
+        AIturn()
+        turn += 1
+        gamestate = 1
+
 
 
     for event in pygame.event.get():
@@ -193,32 +283,10 @@ while running == True:
         if event.type == pygame.QUIT:
             running = False
         
-        if event.type == pygame.KEYDOWN:
-            
-            if event.key == pygame.K_1:
-                gamestate = 0
-                move(CurrAttacker(), AIlist[0])
+   
+
                 
 
-                gamestate = 2
-                AIlist[0].takeDMG(CurrAttacker().attack)
-            
-            if event.key == pygame.K_2:
-                gamestate = 0
-                move(CurrAttacker(), AIlist[1])  
-
-                gamestate = 2
-                AIlist[1].takeDMG(CurrAttacker().attack)
-
-            if event.key == pygame.K_3:
-                gamestate = 0
-                move(CurrAttacker(), AIlist[2])      
-                
-
-                gamestate = 2
-                AIlist[2].takeDMG(CurrAttacker().attack)
-            turn += 1
-            print(turn)
 
 
 
