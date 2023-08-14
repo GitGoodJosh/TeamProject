@@ -34,7 +34,7 @@ screen = pygame.display.get_surface()
 
 # define all classes here
 class character():
-    def __init__(self, x, y, maxHp, Attack, Defense, charImage):
+    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool):
         self.xCoord = x
         self.yCoord = y 
         self.hpMax = maxHp
@@ -42,12 +42,22 @@ class character():
         self.attack = Attack
         self.defense = Defense
         self.image = charImage
+        self.alive = status 
     def takeDMG(self, attackApplied):
+        print(self.hpCurrent)
         self.hpCurrent = self.hpCurrent - (attackApplied - self.defense)
         print(self.hpCurrent)
-        return self.hpCurrent
-    def healHP(self):
-        self.hpCurrent = self.hpCurrent + (1/4)*(self.hpMax - self.hpCurrent) 
+    def checkAlive(self):
+        print(self.alive, self.image)
+        if self.hpCurrent <= 0:
+            self.alive = False
+            self.image = None
+            print(self.alive, self.image)
+
+        else:
+            pass
+        
+    
 
     
         
@@ -62,9 +72,7 @@ class tank(character):
         super().__init__(x, y, maxHp, attack, defense)
 
 
-class cleric(character):
-    def __init__(self, x, y, maxHp, attack, defense):
-        super().__init__( x, y, maxHp, attack, defense)
+
 
 
 
@@ -81,11 +89,7 @@ print(AITank.takeDMG(playerFighter.applyDMG()))
 print(AITank.takeDMG(playerFighter.applyDMG()))
 print(AITank.takeDMG(playerFighter.applyDMG()))
 
-# yes
-#test heal (1/4 of lost hp)
-AITank.healHP()
-print(AITank.hpCurrent)
-# yes 
+
 '''
 
 
