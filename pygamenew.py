@@ -23,121 +23,74 @@ def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
 Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
 BGimage = LoadImg('pygameBACKGROUND.png')
 TANKimage = LoadImg('pygameTANK.png')
-FIGHTERimage = LoadImg('pygameFIGHTER.png') # 142 x 153
+FIGHTERimage = LoadImg('pygameFIGHTER.png')
 HEALERimage = LoadImg('pygameHEALER.png')
 FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
 TANKimageAI = FlipImg(TANKimage, True, False)
-HEALERimageAI = FlipImg(HEALERimage, True, False)
-startButton = LoadImg('startButton.png')
-attackButton = LoadImg('attackButton.png')
-healButton = LoadImg('healButton.png')
-startButton = pygame.transform.scale(startButton, (110,90))
+
 
 
 # load all images before this line
 # ------------------------------------------------- #
+def ChooseChar(x, y):
+    CharChosen = False
+    Char = None
+    while CharChosen == False:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_t:
+                    Char =  pygameClasses.character(x, y, 200, 30, 20, TANKimage)
+                    CharChosen = True
+                    
+                elif event.key == pygame.K_f:
+                    Char = pygameClasses.character(x, y, 150, 50, 10, FIGHTERimage)
+                    CharChosen = True
+    return Char
 
-
-playerFighter = pygameClasses.character(0, 150, 150, 50, 10, FIGHTERimage)
-playerTank = pygameClasses.character(100, 300, 200, 30, 20, TANKimage)
-playerCleric = pygameClasses.character(0, 450, 120, 20, 10, HEALERimage)
+playerChar1 = ChooseChar(0, 150)
+playerChar2 = ChooseChar(100, 300)
+playerChar3 = ChooseChar(0, 450)
 AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI)
 AITank = pygameClasses.character(750, 300, 200, 30, 20, TANKimageAI)
-AICleric = pygameClasses.character(870, 450, 120, 20, 10, HEALERimageAI)
+AIFighter2 = pygameClasses.character(870, 450, 120, 20, 10, FIGHTERimageAI)
 
 
 
 # print BG and characters
 screen = pygame.display.get_surface()
-screen.blit(BGimage, (0,0))
-screen.blit(FIGHTERimage, (0,150))
-screen.blit(TANKimage, (100,300))
-screen.blit(HEALERimage, (0,450))
-screen.blit(FIGHTERimageAI, (850,150))
-screen.blit(TANKimageAI, (750,300))
-screen.blit(HEALERimageAI, (870,450))
-pygame.display.flip()
 
-def blitAllexcept(exception):
-    if exception == None:
-        screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(TANKimageAI, (750,300))
-        screen.blit(HEALERimageAI, (870,450))
-    elif exception == FIGHTERimage:   
-        screen.blit(BGimage, (0,0))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(TANKimageAI, (750,300))
-        screen.blit(HEALERimageAI, (870,450))
-        
-    elif exception == TANKimage:
-        screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(TANKimageAI, (750,300))
-        screen.blit(HEALERimageAI, (870,450))
-
-    elif exception == HEALERimage:
-        screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(TANKimageAI, (750,300))
-        screen.blit(HEALERimageAI, (870,450))
-
-    elif exception == FIGHTERimageAI:
-        screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(TANKimageAI, (750,300))
-        screen.blit(HEALERimageAI, (870,450))
+def refreshScreen():
+    screen.blit(BGimage, (0,0))
+    screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
+    screen.blit(playerChar2.image, (playerChar2.xCoord,playerChar2.yCoord))
+    screen.blit(playerChar3.image, (playerChar3.xCoord,playerChar3.yCoord))
+    screen.blit(FIGHTERimageAI, (AIFighter.xCoord,AIFighter.yCoord))
+    screen.blit(TANKimageAI, (AITank.xCoord,AITank.yCoord))
+    screen.blit(FIGHTERimageAI, (AIFighter2.xCoord,AIFighter2.yCoord))
+    pygame.display.flip()
+refreshScreen()
 
 
-    elif exception == TANKimageAI:
-        screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(HEALERimageAI, (870,450))
 
-    elif exception == HEALERimageAI:
-        screen.blit(BGimage, (0,0))
-        screen.blit(FIGHTERimage, (0,150))
-        screen.blit(TANKimage, (100,300))
-        screen.blit(HEALERimage, (0,450))
-        screen.blit(FIGHTERimageAI, (850,150))
-        screen.blit(TANKimageAI, (750,300))
 
 def move(attacker, defender):
-    CHARACTERx = attacker.xCoord
-    CHARACTERy = attacker.yCoord
     originalX = attacker.xCoord
     originalY = attacker.yCoord
-    targetX = defender.xCoord
-    targetY = defender.yCoord
 
     for i in range(30):
-        blitAllexcept(attacker.image)
-        pygame.display.flip()
-        CHARACTERx = CHARACTERx + (targetX - originalX)/30
-        CHARACTERy = CHARACTERy + (targetY - originalY)/30
-        screen.blit(attacker.image, (CHARACTERx, CHARACTERy))
+        attacker.xCoord = attacker.xCoord + (defender.xCoord - originalX)/30
+        attacker.yCoord = attacker.yCoord + (defender.yCoord - originalY)/30
+        refreshScreen()
         pygame.display.flip()
         time.sleep(0.01)
 
+    attacker.xCoord = originalX
+    attacker.yCoord = originalY
+    refreshScreen()
 
-    blitAllexcept(None)
-    pygame.display.flip()
-
-        
+     
 
 
 
@@ -155,8 +108,8 @@ pygame.display.flip()
 clock = pygame.time.Clock()
 running = True 
 turn = 0  
-playerList = [playerFighter, playerTank, playerCleric]   
-AIlist = [AIFighter, AITank, AICleric] 
+playerList = [playerChar1, playerChar2, playerChar3]   
+AIlist = [AIFighter, AITank, AIFighter2] 
 def CurrAttacker(index):
     global turn
     if turn % 2 == 1:
@@ -170,6 +123,8 @@ def CurrDefender(index):
         return playerList[index - 1]
     elif turn % 2 == 0:
         return AIlist[index - 1]
+
+  
 
 def playerTurn():
     global turn, gamestate
@@ -265,8 +220,7 @@ def AIturn():
 while running == True:
 
     if gamestate == 0:
-        blitAllexcept(None)
-        pygame.display.flip()
+        refreshScreen()
     elif gamestate == 1:
         playerTurn()
         turn += 1
