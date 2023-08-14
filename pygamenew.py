@@ -7,7 +7,6 @@ import random
 pygame.init()
 # need list for pygame height and width (cannot usse two separate numbers)
 screensize = (1000, 600)
-# note: used 1824x932 because thats the size of the pic
 # if changing bg pic remember to change size to fit 
 #TeamGame\TeamProject\Assets\pygameBACKGROUND.png
 pygame.display.set_mode(screensize)
@@ -25,10 +24,10 @@ BGimage = LoadImg('pygameBACKGROUND.png')
 TANKimage = LoadImg('pygameTANK.png')
 FIGHTERimage = LoadImg('pygameFIGHTER.png')
 HEALERimage = LoadImg('pygameHEALER.png')
-FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
+FIGHTERimageAI = FlipImg(FIGHTERimage, True, False)
 TANKimageAI = FlipImg(TANKimage, True, False)
 
-
+screen = pygame.display.get_surface()
 
 # load all images before this line
 # ------------------------------------------------- #
@@ -49,18 +48,6 @@ def ChooseChar(x, y):
                     CharChosen = True
     return Char
 
-playerChar1 = ChooseChar(0, 150)
-playerChar2 = ChooseChar(100, 300)
-playerChar3 = ChooseChar(0, 450)
-AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI)
-AITank = pygameClasses.character(750, 300, 200, 30, 20, TANKimageAI)
-AIFighter2 = pygameClasses.character(870, 450, 120, 20, 10, FIGHTERimageAI)
-
-
-
-# print BG and characters
-screen = pygame.display.get_surface()
-
 def refreshScreen():
     screen.blit(BGimage, (0,0))
     screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
@@ -70,10 +57,6 @@ def refreshScreen():
     screen.blit(TANKimageAI, (AITank.xCoord,AITank.yCoord))
     screen.blit(FIGHTERimageAI, (AIFighter2.xCoord,AIFighter2.yCoord))
     pygame.display.flip()
-refreshScreen()
-
-
-
 
 def move(attacker, defender):
     originalX = attacker.xCoord
@@ -90,12 +73,21 @@ def move(attacker, defender):
     attacker.yCoord = originalY
     refreshScreen()
 
-     
 
 
 
+playerChar1 = ChooseChar(0, 150)
+playerChar2 = ChooseChar(100, 300)
+playerChar3 = ChooseChar(0, 450)
+AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI)
+AITank = pygameClasses.character(750, 300, 200, 30, 20, TANKimageAI)
+AIFighter2 = pygameClasses.character(870, 450, 120, 20, 10, FIGHTERimageAI)
 
 
+
+# print BG and characters
+
+refreshScreen()
 
 
             
