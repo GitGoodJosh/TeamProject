@@ -27,6 +27,7 @@ HEALERimage = LoadImg('pygameHEALER.png')
 FIGHTERimageAI = FlipImg(FIGHTERimage, True, False)
 TANKimageAI = FlipImg(TANKimage, True, False)
 
+
 screen = pygame.display.get_surface()
 
 # load all images before this line
@@ -140,11 +141,55 @@ def playerTurn():
     global turn, gamestate
     PlayerHasAttacked = False
     TargetHasBeenChosen = False
+    SelectA = None
+    SelectD = None
     while PlayerHasAttacked == False:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
+                print("SA",SelectA)
+
+#get number from keydown and use it to choose attacker
+                if SelectA == None:
+                
+                    key = (chr(int(event.key)))
+                    print("A1",key)
+                    if key not in ['1', '2', '3']:
+                        pass
+                    else:
+                        Attacker = CurrAttacker(int(key))
+                        if Attacker.alive == True:
+                            SelectA = True
+                        elif Attacker.alive == False:
+                            pass
+
+                    
+                elif SelectA == True and SelectD == None:
+                    key = (chr(int(event.key)))
+                    print("D1",key)
+                    if key not in ['1', '2', '3']:
+                        pass
+                    else:
+                        Defender = CurrDefender(int(key))
+                    if Defender.alive == True:
+                        SelectD = True
+                    
+                   
+                elif SelectA == True and SelectD == True:
+                    if Attacker.alive == True and Defender.alive == True:
+                        move(Attacker, Defender)
+                        Defender.takeDMG(Attacker.attack)
+                        PlayerHasAttacked = True
+                        SelectA = None
+                        SelectD = None
+                        gamestate = 2
+                else:
+                        pass     
+
+
+
+                '''
                 if event.key == pygame.K_1:
                     Attacker = CurrAttacker(1)
                     while TargetHasBeenChosen == False:
@@ -176,8 +221,11 @@ def playerTurn():
                                         TargetHasBeenChosen = True
                                     else:
                                         playerTurn()              
-                    PlayerHasAttacked = True         
-                elif event.key == pygame.K_2:
+                    PlayerHasAttacked = True       
+                  
+
+
+                if event.key == pygame.K_2:
                     Attacker = CurrAttacker(2)
                     while TargetHasBeenChosen == False:
                         for event in pygame.event.get():
@@ -240,8 +288,9 @@ def playerTurn():
                                         Defender.takeDMG(Attacker.attack)
                                         TargetHasBeenChosen = True
                                     else:
-                                        playerTurn()            
-                    PlayerHasAttacked = True
+                                        playerTurn()
+                    '''                                
+                   # PlayerHasAttacked = True
 
 
 def AIturn():
