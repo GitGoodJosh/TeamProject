@@ -49,15 +49,26 @@ def ChooseChar(x, y):
                     CharChosen = True
     return Char
 
+def show_text( msg, color, x, y ):
+    font = pygame.font.SysFont(None, 30)
+    text = font.render( msg, True, color)
+    screen.blit(text, ( x, y ) )
+
 def refreshScreen():
     CheckAliveAll()
+
     screen.blit(BGimage, (0,0))
     if playerChar1.alive == True:
         screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
+        show_text(str(playerChar1.hpCurrent), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 20)
+
     if playerChar2.alive == True:
         screen.blit(playerChar2.image, (playerChar2.xCoord,playerChar2.yCoord))
-    if playerChar1.alive == True:
+        show_text(str(playerChar2.hpCurrent), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 20)
+    if playerChar3.alive == True:
         screen.blit(playerChar3.image, (playerChar3.xCoord,playerChar3.yCoord))
+        show_text(str(playerChar3.hpCurrent), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 20)
+
     if AIFighter.alive == True:
         screen.blit(FIGHTERimageAI, (AIFighter.xCoord,AIFighter.yCoord))
     if AITank.alive == True:
@@ -75,7 +86,7 @@ def move(attacker, defender):
         attacker.xCoord = attacker.xCoord + (defender.xCoord - originalX)/30
         attacker.yCoord = attacker.yCoord + (defender.yCoord - originalY)/30
         refreshScreen()
-        pygame.display.flip()
+        pygame.display.flip() 
         time.sleep(0.01)
 
     attacker.xCoord = originalX
@@ -139,10 +150,11 @@ def CurrDefender(index):
 
 def playerTurn():
     global turn, gamestate
-    PlayerHasAttacked = False
-    TargetHasBeenChosen = False
     SelectA = None
     SelectD = None
+    PlayerHasAttacked = False
+    TargetHasBeenChosen = False
+
     while PlayerHasAttacked == False:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -163,8 +175,6 @@ def playerTurn():
                             SelectA = True
                         elif Attacker.alive == False:
                             pass
-
-                    
                 elif SelectA == True and SelectD == None:
                     key = (chr(int(event.key)))
                     print("D1",key)
@@ -172,18 +182,20 @@ def playerTurn():
                         pass
                     else:
                         Defender = CurrDefender(int(key))
-                    if Defender.alive == True:
-                        SelectD = True
-                    
-                   
-                elif SelectA == True and SelectD == True:
+                        if Defender.alive == True:
+                            SelectD = True
+                        else:
+                            pass
+                        
+                if SelectA == True and SelectD == True:
                     if Attacker.alive == True and Defender.alive == True:
                         move(Attacker, Defender)
                         Defender.takeDMG(Attacker.attack)
                         PlayerHasAttacked = True
                         SelectA = None
                         SelectD = None
-                        gamestate = 2
+                        Defender = None
+                        Attacker = None
                 else:
                         pass     
 
@@ -292,31 +304,58 @@ def playerTurn():
                     '''                                
                    # PlayerHasAttacked = True
 
+def winCondition():
+    if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
+       print("Win")
+    else:
+        pass
+
+       # pygame.quit()
+
+
 
 def AIturn():
     global turn, gamestate
     Attacker = CurrAttacker(random.randint(0,2))
-    Defender = CurrDefender(1)
+    Defender = CurrDefender(random.randint(0,2))
+    while Attacker.alive == False or Attacker == None:
+        Rand = random.randint(0,2)
+        Attacker = CurrAttacker(Rand)
+        print("Random Attacker", Rand)
+    
+    while Defender.alive == False or Defender == None:
+        Rand = random.randint(0,2)
+        Defender = CurrDefender(Rand)
+        print("Random Defender", Rand)
+
     if Attacker.alive == True and Defender.alive == True:
         move(Attacker, Defender)
         Defender.takeDMG(Attacker.attack)
-    elif AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
-        pygame.quit()
+    # elif AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
+    #    print("Win")
+    #    # pygame.quit()
     else:
-        AIturn()
+        pass
     
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
+    clock.tick(60)
+    
 
     if gamestate == 0:
         refreshScreen()
+        winCondition()
         
     elif gamestate == 1:
+        refreshScreen()
+        winCondition()
         playerTurn()
 
         turn += 1
         gamestate = 2
     elif gamestate == 2:
+        refreshScreen()
+        winCondition()
         AIturn()
 
         turn += 1
