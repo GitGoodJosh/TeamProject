@@ -34,7 +34,7 @@ screen = pygame.display.get_surface()
 
 # define all classes here
 class character():
-    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool):
+    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, exp):
         self.xCoord = x
         self.yCoord = y 
         self.hpMax = maxHp
@@ -42,13 +42,14 @@ class character():
         self.attack = Attack
         self.defense = Defense
         self.image = charImage
-        self.alive = status 
+        self.alive = status
+        self.exp = exp
     def takeDMG(self, attackApplied):
         print(self.hpCurrent)
         self.hpCurrent = self.hpCurrent - (attackApplied - self.defense)
         print(self.hpCurrent)
     def checkAlive(self):
-        print(self.alive, self.image)
+        #print(self.alive, self.image)
         if self.hpCurrent <= 0:
             self.alive = False
             self.image = None
