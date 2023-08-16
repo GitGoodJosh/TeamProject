@@ -41,11 +41,11 @@ def ChooseChar(x, y):
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
-                    Char =  pygameClasses.character(x, y, 200, 30, 20, TANKimage, True)
+                    Char =  pygameClasses.character(x, y, 200, 30, 20, TANKimage, True , 0)
                     CharChosen = True
                     
                 elif event.key == pygame.K_f:
-                    Char = pygameClasses.character(x, y, 150, 50, 10, FIGHTERimage, True)
+                    Char = pygameClasses.character(x, y, 150, 50, 10, FIGHTERimage, True , 0)
                     CharChosen = True
     return Char
 
@@ -71,10 +71,14 @@ def refreshScreen():
 
     if AIFighter.alive == True:
         screen.blit(FIGHTERimageAI, (AIFighter.xCoord,AIFighter.yCoord))
+        show_text(str(AIFighter.hpCurrent), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 20)
+
     if AITank.alive == True:
         screen.blit(TANKimageAI, (AITank.xCoord,AITank.yCoord))
+        show_text(str(AITank.hpCurrent), (255, 0, 0), AITank.xCoord + 50, AITank.yCoord - 20)
     if AIFighter2.alive == True:
         screen.blit(FIGHTERimageAI, (AIFighter2.xCoord,AIFighter2.yCoord))
+        show_text(str(AIFighter2.hpCurrent), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 20)
     pygame.display.flip()
 
 
@@ -109,9 +113,9 @@ def CheckAliveAll():
 playerChar1 = ChooseChar(0, 150)
 playerChar2 = ChooseChar(100, 300)
 playerChar3 = ChooseChar(0, 450)
-AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI, True)
-AITank = pygameClasses.character(750, 300, 200, 30, 20, TANKimageAI, True)
-AIFighter2 = pygameClasses.character(870, 450, 120, 20, 10, FIGHTERimageAI, True)
+AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI, True , 0)
+AITank = pygameClasses.character(750, 300, 200, 30, 20, TANKimageAI, True , 0)
+AIFighter2 = pygameClasses.character(870, 450, 120, 20, 10, FIGHTERimageAI, True , 0)
 
 
 
@@ -307,6 +311,7 @@ def playerTurn():
 def winCondition():
     if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
        print("Win")
+       return True
     else:
         pass
 
@@ -356,7 +361,10 @@ while running == True:
     elif gamestate == 2:
         refreshScreen()
         winCondition()
-        AIturn()
+        if winCondition() == True:
+            pass
+        else:
+            AIturn()
 
         turn += 1
         gamestate = 1
