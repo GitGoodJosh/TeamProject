@@ -156,7 +156,7 @@ def playerTurn():
     global turn, gamestate
     SelectA = None
     SelectD = None
-    PlayerHasAttacked = False
+    PlayerHasAttacked = False   #####
     TargetHasBeenChosen = False
 
     while PlayerHasAttacked == False:
@@ -169,7 +169,7 @@ def playerTurn():
 #get number from keydown and use it to choose attacker
                 if SelectA == None:
                 
-                    key = (chr(int(event.key)))
+                    key = (chr(int(event.key)))  #####
                     print("A1",key)
                     if key not in ['1', '2', '3']:
                         pass
@@ -321,8 +321,8 @@ def winCondition():
 
 def AIturn():
     global turn, gamestate
-    Attacker = CurrAttacker(random.randint(0,2))
-    Defender = CurrDefender(random.randint(0,2))
+    Attacker = CurrAttacker(random.randint(0,2)) #####
+    Defender = CurrDefender(random.randint(0,2)) #####
     while Attacker.alive == False or Attacker == None:
         Rand = random.randint(0,2)
         Attacker = CurrAttacker(Rand)
@@ -349,7 +349,7 @@ while running == True:
 
     if gamestate == 0:
         refreshScreen()
-        winCondition()
+        winCondition() #####
         
     elif gamestate == 1:
         refreshScreen()
