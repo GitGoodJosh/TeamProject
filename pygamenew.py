@@ -156,8 +156,8 @@ def playerTurn():
     global turn, gamestate
     SelectA = None
     SelectD = None
-    PlayerHasAttacked = False   #####
-    TargetHasBeenChosen = False
+    PlayerHasAttacked = False   
+    
 
     while PlayerHasAttacked == False:
         for event in pygame.event.get():
@@ -169,7 +169,7 @@ def playerTurn():
 #get number from keydown and use it to choose attacker
                 if SelectA == None:
                 
-                    key = (chr(int(event.key)))  #####
+                    key = (chr(int(event.key)))  
                     print("A1",key)
                     if key not in ['1', '2', '3']:
                         pass
@@ -205,109 +205,6 @@ def playerTurn():
 
 
 
-                '''
-                if event.key == pygame.K_1:
-                    Attacker = CurrAttacker(1)
-                    while TargetHasBeenChosen == False:
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_1:
-                                    Defender = CurrDefender(1)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                elif event.key == pygame.K_2:
-                                    Defender = CurrDefender(2)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                elif event.key == pygame.K_3:
-                                    Defender = CurrDefender(3)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()              
-                    PlayerHasAttacked = True       
-                  
-
-
-                if event.key == pygame.K_2:
-                    Attacker = CurrAttacker(2)
-                    while TargetHasBeenChosen == False:
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_1:
-                                    Defender = CurrDefender(1)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                elif event.key == pygame.K_2:
-                                    Defender = CurrDefender(2)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                elif event.key == pygame.K_3:
-                                    Defender = CurrDefender(3)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                
-                    PlayerHasAttacked = True
-                elif event.key == pygame.K_3:
-                    Attacker = CurrAttacker(3)
-                    while TargetHasBeenChosen == False:
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.K_1:
-                                    Defender = CurrDefender(1)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                elif event.key == pygame.K_2:
-                                    Defender = CurrDefender(2)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                                elif event.key == pygame.K_3:
-                                    Defender = CurrDefender(3)
-                                    if Attacker.alive == True and Defender.alive == True:
-                                        move(Attacker, Defender)
-                                        Defender.takeDMG(Attacker.attack)
-                                        TargetHasBeenChosen = True
-                                    else:
-                                        playerTurn()
-                    '''                                
-                   # PlayerHasAttacked = True
-
 def winCondition():
     if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
        print("Win")
@@ -321,8 +218,8 @@ def winCondition():
 
 def AIturn():
     global turn, gamestate
-    Attacker = CurrAttacker(random.randint(0,2)) #####
-    Defender = CurrDefender(random.randint(0,2)) #####
+    Attacker = CurrAttacker(random.randint(0,2)) 
+    Defender = CurrDefender(random.randint(0,2)) 
     while Attacker.alive == False or Attacker == None:
         Rand = random.randint(0,2)
         Attacker = CurrAttacker(Rand)
@@ -349,7 +246,7 @@ while running == True:
 
     if gamestate == 0:
         refreshScreen()
-        winCondition() #####
+        
         
     elif gamestate == 1:
         refreshScreen()
