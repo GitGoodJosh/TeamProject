@@ -1,4 +1,4 @@
-
+import random
 import pygame
 # need to load all this here to make the functions work here so the other page looks cleaner
 import time
@@ -46,7 +46,7 @@ class character():
         self.exp = exp
     def takeDMG(self, attackApplied):
         print(self.hpCurrent)
-        self.hpCurrent = self.hpCurrent - (attackApplied - self.defense)
+        self.hpCurrent = self.hpCurrent - (attackApplied - self.defense + random.randint(-5, 10))
         print(self.hpCurrent)
     def checkAlive(self):
         #print(self.alive, self.image)
