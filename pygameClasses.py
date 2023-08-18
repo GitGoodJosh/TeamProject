@@ -1,40 +1,11 @@
 import random
-import pygame
 # need to load all this here to make the functions work here so the other page looks cleaner
 import time
-import os
-pygame.init()
-screensize = (1000, 600)
-pygame.display.set_mode(screensize)
-def LoadImg(img):
-    return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
-
-def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
-    return pygame.transform.flip(img, verticalFlip, horizontalFlip)
-
-# load all images after this line
-Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
-BGimage = LoadImg('pygameBACKGROUND.png')
-TANKimage = LoadImg('pygameTANK.png')
-FIGHTERimage = LoadImg('pygameFIGHTER.png')
-HEALERimage = LoadImg('pygameHEALER.png')
-FIGHTERimageAI = FlipImg(FIGHTERimage,True,False)
-TANKimageAI = FlipImg(TANKimage, True, False)
-HEALERimageAI = FlipImg(HEALERimage, True, False)
-screen = pygame.display.get_surface()
-
-
-        
-
-
-
-
-
 
 
 # define all classes here
 class character():
-    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, exp):
+    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, exp, name = str("AI" + str(random.randint(0,99)))):
         self.xCoord = x
         self.yCoord = y 
         self.hpMax = maxHp
@@ -44,19 +15,32 @@ class character():
         self.image = charImage
         self.alive = status
         self.exp = exp
+        self.name = name
     def takeDMG(self, attackApplied):
         print(self.hpCurrent)
-        self.hpCurrent = self.hpCurrent - (attackApplied - self.defense + random.randint(-5, 10))
+        damage = attackApplied - self.defense + random.randint(-10, 10)
+        self.hpCurrent = self.hpCurrent - damage
+        if damage < 55:    
+            self.exp += 50
+        elif damage >= 55:
+            self.exp += 20
+        # dont change numbers for attack and def, optimised exp to have skewed impact on tanks and fighters for balance
         print(self.hpCurrent)
-    def checkAlive(self):
+        print(self.exp)
+    def checkAliveEXP(self):
         #print(self.alive, self.image)
         if self.hpCurrent <= 0:
             self.alive = False
             self.image = None
             print(self.alive, self.image)
 
-        else:
-            pass
+        elif self.exp >= 100:
+            self.hpCurrent += 30
+            self.attack += 20
+            self.exp -= 100
+
+
+            
         
     
 

@@ -41,18 +41,25 @@ def ChooseChar(x, y):
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
-                    Char =  pygameClasses.character(x, y, 200, 30, 20, TANKimage, True , 0)
+                    Char =  pygameClasses.character(x, y, 200, 50, 20, TANKimage, True , 0)
+                    Char.name = "tank"
                     CharChosen = True
                     
                 elif event.key == pygame.K_f:
-                    Char = pygameClasses.character(x, y, 150, 50, 10, FIGHTERimage, True , 0)
+                    Char = pygameClasses.character(x, y, 150, 70, 10, FIGHTERimage, True , 0)
+                    Char.name = "fighter"
+
                     CharChosen = True
     return Char
 
-def show_text( msg, color, x, y ):
-    font = pygame.font.SysFont(None, 30)
-    text = font.render( msg, True, color)
-    screen.blit(text, ( x, y ) )
+pygame.font.SysFont.__init__()
+def show_text( msg, color, x, y, size = 30 ):
+    try:
+        font = pygame.font.SysFont(None, size)
+        text = font.render( msg, True, color)
+        screen.blit(text, ( x, y ) )
+    except:
+        pygame.error
 
 def refreshScreen():
     CheckAliveAll()
@@ -60,25 +67,47 @@ def refreshScreen():
     screen.blit(BGimage, (0,0))
     if playerChar1.alive == True:
         screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
-        show_text(str(playerChar1.hpCurrent), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 20)
+        show_text(str("HP: ") + str(playerChar1.hpCurrent), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 20)
+        show_text(str("EXP: ") + str(playerChar1.exp), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 40)
+        show_text(str(playerChar1.name).title(), (255, 255, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 60)
+
+
+
 
     if playerChar2.alive == True:
         screen.blit(playerChar2.image, (playerChar2.xCoord,playerChar2.yCoord))
-        show_text(str(playerChar2.hpCurrent), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 20)
+        show_text(str("HP: ") + str(playerChar2.hpCurrent), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 20)
+        show_text(str("EXP: ") + str(playerChar2.exp), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 40)
+        show_text(str(playerChar2.name).title(), (255, 255, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 60)
+
+
     if playerChar3.alive == True:
         screen.blit(playerChar3.image, (playerChar3.xCoord,playerChar3.yCoord))
-        show_text(str(playerChar3.hpCurrent), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 20)
+        show_text(str("HP: ") + str(playerChar3.hpCurrent), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 20)
+        show_text(str("EXP: ") + str(playerChar3.exp), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 40)
+        show_text(str(playerChar3.name).title(), (255, 255, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 60)
+
+
 
     if AIFighter.alive == True:
         screen.blit(FIGHTERimageAI, (AIFighter.xCoord,AIFighter.yCoord))
-        show_text(str(AIFighter.hpCurrent), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 20)
+        show_text(str("HP: ") + str(AIFighter.hpCurrent), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 20)
+        show_text(str("EXP: ") + str(AIFighter.exp), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 40)
+        show_text(str(AIFighter.name).title(), (255, 255, 255), AIFighter.xCoord + 50, AIFighter.yCoord - 60)
+
 
     if AITank.alive == True:
         screen.blit(TANKimageAI, (AITank.xCoord,AITank.yCoord))
-        show_text(str(AITank.hpCurrent), (255, 0, 0), AITank.xCoord + 50, AITank.yCoord - 20)
+        show_text(str("HP: ") + str(AITank.hpCurrent), (255, 0, 0), AITank.xCoord + 50, AITank.yCoord - 20)
+        show_text(str("EXP: ") + str(AITank.exp), (255, 0, 0), AITank.xCoord + 50, AITank.yCoord - 40)
+        show_text(str(AITank.name).title(), (255, 255, 255), AITank.xCoord + 50, AITank.yCoord - 60)
+
     if AIFighter2.alive == True:
         screen.blit(FIGHTERimageAI, (AIFighter2.xCoord,AIFighter2.yCoord))
-        show_text(str(AIFighter2.hpCurrent), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 20)
+        show_text(str("HP: ") + str(AIFighter2.hpCurrent), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 20)
+        show_text(str("EXP: ") + str(AIFighter2.exp), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 40)
+        show_text(str(AIFighter2.name).title(), (255, 255, 255), AIFighter2.xCoord + 50, AIFighter2.yCoord - 60)
+
     pygame.display.flip()
 
 
@@ -98,26 +127,48 @@ def move(attacker, defender):
     refreshScreen()
 
 def CheckAliveAll():
-    playerChar1.checkAlive()
-    playerChar2.checkAlive()
-    playerChar3.checkAlive()
-    AIFighter.checkAlive()
-    AITank.checkAlive()
-    AIFighter2.checkAlive()
+    playerChar1.checkAliveEXP()
+    playerChar2.checkAliveEXP()
+    playerChar3.checkAliveEXP()
+    AIFighter.checkAliveEXP()
+    AITank.checkAliveEXP()
+    AIFighter2.checkAliveEXP()
 
 
 
-
+            
 
 
 playerChar1 = ChooseChar(0, 150)
 playerChar2 = ChooseChar(100, 300)
 playerChar3 = ChooseChar(0, 450)
-AIFighter = pygameClasses.character(850, 150, 150, 50, 10, FIGHTERimageAI, True , 0)
-AITank = pygameClasses.character(750, 300, 200, 30, 20, TANKimageAI, True , 0)
-AIFighter2 = pygameClasses.character(870, 450, 120, 20, 10, FIGHTERimageAI, True , 0)
+AIFighter = pygameClasses.character(850, 150, 150, 70, 10, FIGHTERimageAI, True , 0)
+AITank = pygameClasses.character(750, 300, 200, 50, 20, TANKimageAI, True , 0)
+AIFighter2 = pygameClasses.character(870, 450, 150, 70, 10, FIGHTERimageAI, True , 0)
 
-
+playerList = [playerChar1, playerChar2, playerChar3]   
+AIlist = [AIFighter, AITank, AIFighter2] 
+i = 0
+for char in playerList:  
+    i += 1
+    nameChosen = False
+    charNameByPlayer = ""
+    screen.fill((0, 0, 0))
+    while nameChosen == False: 
+        show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (255, 255, 255), 120, 100, 40)
+        show_text(str(charNameByPlayer), (255, 255, 255), 250, 500)
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                letter = chr(int(event.key))
+                if event.key == pygame.K_RETURN:
+                    char.name = charNameByPlayer
+                    nameChosen = True
+                else:
+                    charNameByPlayer = charNameByPlayer + letter
+                
 
 # print BG and characters
 
@@ -134,8 +185,7 @@ pygame.display.flip()
 clock = pygame.time.Clock()
 running = True 
 turn = 0  
-playerList = [playerChar1, playerChar2, playerChar3]   
-AIlist = [AIFighter, AITank, AIFighter2] 
+
 def CurrAttacker(index):
     global turn
     if turn % 2 == 1:
@@ -241,7 +291,7 @@ def AIturn():
     
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
-    clock.tick(60)
+    clock.tick(100)
     
 
     if gamestate == 0:
