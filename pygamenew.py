@@ -63,7 +63,6 @@ def show_text( msg, color, x, y, size = 30 ):
 
 def refreshScreen():
     CheckAliveAll()
-
     screen.blit(BGimage, (0,0))
     if playerChar1.alive == True:
         screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
@@ -71,15 +70,11 @@ def refreshScreen():
         show_text(str("EXP: ") + str(playerChar1.exp), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 40)
         show_text(str(playerChar1.name).title(), (255, 255, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 60)
 
-
-
-
     if playerChar2.alive == True:
         screen.blit(playerChar2.image, (playerChar2.xCoord,playerChar2.yCoord))
         show_text(str("HP: ") + str(playerChar2.hpCurrent), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 20)
         show_text(str("EXP: ") + str(playerChar2.exp), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 40)
         show_text(str(playerChar2.name).title(), (255, 255, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 60)
-
 
     if playerChar3.alive == True:
         screen.blit(playerChar3.image, (playerChar3.xCoord,playerChar3.yCoord))
@@ -87,14 +82,11 @@ def refreshScreen():
         show_text(str("EXP: ") + str(playerChar3.exp), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 40)
         show_text(str(playerChar3.name).title(), (255, 255, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 60)
 
-
-
     if AIFighter.alive == True:
         screen.blit(FIGHTERimageAI, (AIFighter.xCoord,AIFighter.yCoord))
         show_text(str("HP: ") + str(AIFighter.hpCurrent), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 20)
         show_text(str("EXP: ") + str(AIFighter.exp), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 40)
         show_text(str(AIFighter.name).title(), (255, 255, 255), AIFighter.xCoord + 50, AIFighter.yCoord - 60)
-
 
     if AITank.alive == True:
         screen.blit(TANKimageAI, (AITank.xCoord,AITank.yCoord))
@@ -120,21 +112,17 @@ def move(attacker, defender):
         attacker.yCoord = attacker.yCoord + (defender.yCoord - originalY)/30
         refreshScreen()
         pygame.display.flip() 
-        time.sleep(0.01)
 
     attacker.xCoord = originalX
     attacker.yCoord = originalY
     refreshScreen()
 
-def CheckAliveAll():
-    playerChar1.checkAliveEXP()
-    playerChar2.checkAliveEXP()
-    playerChar3.checkAliveEXP()
-    AIFighter.checkAliveEXP()
-    AITank.checkAliveEXP()
-    AIFighter2.checkAliveEXP()
 
 
+
+
+
+    
 
             
 
@@ -142,9 +130,73 @@ def CheckAliveAll():
 playerChar1 = ChooseChar(0, 150)
 playerChar2 = ChooseChar(100, 300)
 playerChar3 = ChooseChar(0, 450)
-AIFighter = pygameClasses.character(850, 150, 150, 70, 10, FIGHTERimageAI, True , 0)
-AITank = pygameClasses.character(750, 300, 200, 50, 20, TANKimageAI, True , 0)
-AIFighter2 = pygameClasses.character(870, 450, 150, 70, 10, FIGHTERimageAI, True , 0)
+AIFighter = pygameClasses.character(850, 150, 15, 70, 10, FIGHTERimageAI, True , 0)
+AITank = pygameClasses.character(750, 300, 20, 50, 20, TANKimageAI, True , 0)
+AIFighter2 = pygameClasses.character(870, 450, 15, 70, 10, FIGHTERimageAI, True , 0)
+
+characters = {
+            "playerChar1" : {"instance" : playerChar1 ,"rank" : "1", "death added?" : "no"},
+            "playerChar2" : {"instance" : playerChar2 ,"rank" :"1", "death added?" : "no"},
+            "playerChar3" : {"instance" : playerChar3 ,"rank" :"1", "death added?" : "no"},
+            "AIFighter" : {"instance" : AIFighter ,"rank" :"1", "death added?" : "no"},
+            "AITank" : {"instance" : AITank ,"rank" :"1", "death added?" : "no"},
+            "AIFighter2" : {"instance" : AIFighter2 ,"rank" :"1", "death added?" : "no"},
+}
+
+
+# a=b=c=d=e=f=g=h=i=j=k=l=0
+ #need these to make sure the function doesnt keep adding death logs every time its called
+def CheckAliveAll():
+    global characters
+    for i in characters.keys():
+        j = characters[i]
+        char = j["instance"]
+        if char.checkAliveEXP() == False and j["death added?"] == "no":
+            game_log.append(f"{char.name} died\n")
+            j["death added?"] = "yes"
+        elif isinstance(char.checkAliveEXP(), int) and j["rank"] != char.rank and char.alive == True:
+            game_log.append(f"{char.name} was promoted to rank {char.rank}\n")
+            j["rank"] = char.rank
+        
+    '''if playerChar1.checkAliveEXP() == False and a == 0:
+        game_log.append(f"{playerChar1.name} died\n")
+        a = 1
+    elif isinstance(playerChar1.checkAliveEXP(), int) and :
+        game_log.append(f"{playerChar1.name} was promoted to rank {playerChar1.rank}\n")
+
+    if playerChar2.checkAliveEXP() == False and b == 0:
+        game_log.append(f"{playerChar2.name} died\n")
+        b = 1
+    elif isinstance(playerChar2.checkAliveEXP(), int):
+        game_log.append(f"{playerChar2.name} was promoted to rank {playerChar2.rank}\n")
+
+    if playerChar3.checkAliveEXP() == False and c == 0:
+        game_log.append(f"{playerChar3.name} died\n")
+        c = 1
+    elif isinstance(playerChar3.checkAliveEXP(), int):
+        game_log.append(f"{playerChar3.name} was promoted to rank {playerChar3.rank}\n")
+
+    if AIFighter.checkAliveEXP() == False and d == 0:
+        game_log.append(f"{AIFighter.name} died\n")
+        d = 1
+    elif isinstance(AIFighter.checkAliveEXP(), int):
+        game_log.append(f"{AIFighter.name} was promoted to rank {AIFighter.rank}\n")
+
+    if AITank.checkAliveEXP() == False and e == 0:
+        game_log.append(f"{AITank.name} died\n")
+        e = 1
+    elif isinstance(AITank.checkAliveEXP(), int):
+        game_log.append(f"{AITank.name} was promoted to rank {AITank.rank}\n")
+
+    if AIFighter2.checkAliveEXP() == False and f == 0:
+        game_log.append(f"{AIFighter2.name} died\n")
+        f = 1
+    elif isinstance(AIFighter2.checkAliveEXP(), int):
+        game_log.append(f"{AIFighter2.name} was promoted to rank {AIFighter2.rank}\n")
+'''
+
+
+game_log = ["game started\n"]
 
 playerList = [playerChar1, playerChar2, playerChar3]   
 AIlist = [AIFighter, AITank, AIFighter2] 
@@ -164,6 +216,7 @@ for char in playerList:
             elif event.type == pygame.KEYDOWN:
                 letter = chr(int(event.key))
                 if event.key == pygame.K_RETURN:
+                    game_log.append(f"{char.name} was named {charNameByPlayer}\n")
                     char.name = charNameByPlayer
                     nameChosen = True
                 else:
@@ -179,9 +232,7 @@ refreshScreen()
 gamestate = 1
 # gamestate 0 = waiting, gamsestate 1 = players attack, gamestate 2 = ai attack
 
-(mouseX, mouseY) = pygame.mouse.get_pos()
 
-pygame.display.flip()
 clock = pygame.time.Clock()
 running = True 
 turn = 0  
@@ -244,7 +295,8 @@ def playerTurn():
                 if SelectA == True and SelectD == True:
                     if Attacker.alive == True and Defender.alive == True:
                         move(Attacker, Defender)
-                        Defender.takeDMG(Attacker.attack)
+                        dmg = Defender.takeDMG(Attacker.attack)
+                        game_log.append(f"{Attacker.name} attacked {Defender.name} for {dmg} damage\n")
                         PlayerHasAttacked = True
                         SelectA = None
                         SelectD = None
@@ -258,6 +310,7 @@ def playerTurn():
 def winCondition():
     if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
        print("Win")
+       print(*game_log)
        return True
     else:
         pass
@@ -282,17 +335,21 @@ def AIturn():
 
     if Attacker.alive == True and Defender.alive == True:
         move(Attacker, Defender)
-        Defender.takeDMG(Attacker.attack)
-    # elif AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
-    #    print("Win")
-    #    # pygame.quit()
+        dmg = Defender.takeDMG(Attacker.attack)
+        game_log.append(f"{Attacker.name} attacked {Defender.name} for {dmg} damage\n")
+
     else:
         pass
     
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
-    clock.tick(100)
+    for event in pygame.event.get():
     
+        if event.type == pygame.QUIT:
+            running = False
+    
+    
+    clock.tick(60)
 
     if gamestate == 0:
         refreshScreen()
@@ -301,15 +358,19 @@ while running == True:
     elif gamestate == 1:
         refreshScreen()
         winCondition()
-        playerTurn()
+        try: 
+            playerTurn()
+        except pygame.error:
+            print("GAME OVER")
+            running = False
 
         turn += 1
         gamestate = 2
     elif gamestate == 2:
         refreshScreen()
-        winCondition()
         if winCondition() == True:
-            pass
+            game_log.append("player won")
+            gamestate = 1
         else:
             AIturn()
 
@@ -317,11 +378,6 @@ while running == True:
         gamestate = 1
 
 
-
-    for event in pygame.event.get():
-    
-        if event.type == pygame.QUIT:
-            running = False
         
    
 
@@ -335,3 +391,4 @@ while running == True:
 # required to uninitialise unnecessary resources if running game as a part of a larger program 
 pygame.quit()
 
+print(*game_log)

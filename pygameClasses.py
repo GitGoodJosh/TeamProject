@@ -5,7 +5,7 @@ import time
 
 # define all classes here
 class character():
-    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, exp, name = str("AI" + str(random.randint(0,99)))):
+    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, exp):
         self.xCoord = x
         self.yCoord = y 
         self.hpMax = maxHp
@@ -15,29 +15,32 @@ class character():
         self.image = charImage
         self.alive = status
         self.exp = exp
-        self.name = name
+        self.name = str("AI" + str(random.randint(0,99)))
+        self.rank = 1
     def takeDMG(self, attackApplied):
         print(self.hpCurrent)
         damage = attackApplied - self.defense + random.randint(-10, 10)
         self.hpCurrent = self.hpCurrent - damage
         if damage < 55:    
-            self.exp += 50
+            self.exp += 5 * self.defense
         elif damage >= 55:
-            self.exp += 20
-        # dont change numbers for attack and def, optimised exp to have skewed impact on tanks and fighters for balance
-        print(self.hpCurrent)
-        print(self.exp)
+            self.exp += 2 * self.defense
+        return damage        
     def checkAliveEXP(self):
-        #print(self.alive, self.image)
         if self.hpCurrent <= 0:
             self.alive = False
             self.image = None
-            print(self.alive, self.image)
-
+            return self.alive
+            
         elif self.exp >= 100:
             self.hpCurrent += 30
             self.attack += 20
             self.exp -= 100
+            self.rank += 1
+            return self.rank
+        else:
+            return None
+            
 
 
             
