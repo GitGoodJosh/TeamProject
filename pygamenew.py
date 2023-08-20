@@ -64,7 +64,19 @@ def show_text( msg, color, x, y, size = 30 ):
 def refreshScreen():
     CheckAliveAll()
     screen.blit(BGimage, (0,0))
-    if playerChar1.alive == True:
+    for char in (AIlist + playerList):
+        if char.alive == True:
+            screen.blit(char.image, (char.xCoord,char.yCoord))
+            show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 50, char.yCoord - 20)
+            show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 50, char.yCoord - 40)
+            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 50, char.yCoord - 60)
+        else:
+            pass
+
+
+
+
+    '''if playerChar1.alive == True:
         screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
         show_text(str("HP: ") + str(playerChar1.hpCurrent), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 20)
         show_text(str("EXP: ") + str(playerChar1.exp), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 40)
@@ -98,7 +110,7 @@ def refreshScreen():
         screen.blit(FIGHTERimageAI, (AIFighter2.xCoord,AIFighter2.yCoord))
         show_text(str("HP: ") + str(AIFighter2.hpCurrent), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 20)
         show_text(str("EXP: ") + str(AIFighter2.exp), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 40)
-        show_text(str(AIFighter2.name).title(), (255, 255, 255), AIFighter2.xCoord + 50, AIFighter2.yCoord - 60)
+        show_text(str(AIFighter2.name).title(), (255, 255, 255), AIFighter2.xCoord + 50, AIFighter2.yCoord - 60)'''
 
     pygame.display.flip()
 
@@ -208,7 +220,7 @@ for char in playerList:
     screen.fill((0, 0, 0))
     while nameChosen == False: 
         show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (255, 255, 255), 120, 100, 40)
-        show_text(str(charNameByPlayer), (255, 255, 255), 250, 500)
+        show_text(str(charNameByPlayer), (255, 255, 255), 250, 300, 70)
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -219,6 +231,10 @@ for char in playerList:
                     game_log.append(f"{char.name} was named {charNameByPlayer}\n")
                     char.name = charNameByPlayer
                     nameChosen = True
+                elif event.key == pygame.K_BACKSPACE:
+                    charNameByPlayer = charNameByPlayer[:len(charNameByPlayer) - 1]
+                    screen.fill((0, 0, 0))
+                    pygame.display.flip()
                 else:
                     charNameByPlayer = charNameByPlayer + letter
                 
@@ -254,7 +270,6 @@ def CurrDefender(index):
   
 
 def playerTurn():
-    global turn, gamestate
     SelectA = None
     SelectD = None
     PlayerHasAttacked = False   
@@ -265,13 +280,13 @@ def playerTurn():
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
-                print("SA",SelectA)
+                # print("SA",SelectA)
 
 #get number from keydown and use it to choose attacker
                 if SelectA == None:
                 
                     key = (chr(int(event.key)))  
-                    print("A1",key)
+                    # print("A1",key)
                     if key not in ['1', '2', '3']:
                         pass
                     else:
@@ -280,9 +295,9 @@ def playerTurn():
                             SelectA = True
                         elif Attacker.alive == False:
                             pass
-                elif SelectA == True and SelectD == None:
+                elif SelectA == True and SelectD == None:  # choose defender using number keys
                     key = (chr(int(event.key)))
-                    print("D1",key)
+                    # print("D1",key)
                     if key not in ['1', '2', '3']:
                         pass
                     else:
@@ -309,8 +324,6 @@ def playerTurn():
 
 def winCondition():
     if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
-       print("Win")
-       print(*game_log)
        return True
     else:
         pass
@@ -322,18 +335,18 @@ def winCondition():
 def AIturn():
     global turn, gamestate
     Attacker = CurrAttacker(random.randint(0,2)) 
-    Defender = CurrDefender(random.randint(0,2)) 
-    while Attacker.alive == False or Attacker == None:
+    Defender = CurrDefender(random.randint(0,2)) # choose random attacker and defender
+    while Attacker.alive == False or Attacker == None: #keep generating until attacker chosen is alive
         Rand = random.randint(0,2)
         Attacker = CurrAttacker(Rand)
         print("Random Attacker", Rand)
     
-    while Defender.alive == False or Defender == None:
+    while Defender.alive == False or Defender == None: # line 330 but for defender
         Rand = random.randint(0,2)
         Defender = CurrDefender(Rand)
         print("Random Defender", Rand)
 
-    if Attacker.alive == True and Defender.alive == True:
+    if Attacker.alive == True and Defender.alive == True: #carry out attack
         move(Attacker, Defender)
         dmg = Defender.takeDMG(Attacker.attack)
         game_log.append(f"{Attacker.name} attacked {Defender.name} for {dmg} damage\n")
@@ -360,9 +373,8 @@ while running == True:
         winCondition()
         try: 
             playerTurn()
-        except pygame.error:
-            print("GAME OVER")
-            running = False
+        except pygame.error: #avoid getting error when the while loop tries to get events in playerturn function after the screen has been closed
+            running = False #stop the while loop
 
         turn += 1
         gamestate = 2
