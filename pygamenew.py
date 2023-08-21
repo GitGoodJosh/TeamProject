@@ -26,6 +26,10 @@ FIGHTERimage = LoadImg('pygameFIGHTER.png')
 HEALERimage = LoadImg('pygameHEALER.png')
 FIGHTERimageAI = FlipImg(FIGHTERimage, True, False)
 TANKimageAI = FlipImg(TANKimage, True, False)
+GlobalAttacker = None
+GlobalDefender = None
+GlobalX = None
+GlobalY = None
 
 
 screen = pygame.display.get_surface()
@@ -73,61 +77,42 @@ def refreshScreen():
         else:
             pass
 
-
-
-
-    '''if playerChar1.alive == True:
-        screen.blit(playerChar1.image, (playerChar1.xCoord,playerChar1.yCoord))
-        show_text(str("HP: ") + str(playerChar1.hpCurrent), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 20)
-        show_text(str("EXP: ") + str(playerChar1.exp), (0, 0, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 40)
-        show_text(str(playerChar1.name).title(), (255, 255, 255), playerChar1.xCoord + 50, playerChar1.yCoord - 60)
-
-    if playerChar2.alive == True:
-        screen.blit(playerChar2.image, (playerChar2.xCoord,playerChar2.yCoord))
-        show_text(str("HP: ") + str(playerChar2.hpCurrent), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 20)
-        show_text(str("EXP: ") + str(playerChar2.exp), (0, 0, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 40)
-        show_text(str(playerChar2.name).title(), (255, 255, 255), playerChar2.xCoord + 50, playerChar2.yCoord - 60)
-
-    if playerChar3.alive == True:
-        screen.blit(playerChar3.image, (playerChar3.xCoord,playerChar3.yCoord))
-        show_text(str("HP: ") + str(playerChar3.hpCurrent), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 20)
-        show_text(str("EXP: ") + str(playerChar3.exp), (0, 0, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 40)
-        show_text(str(playerChar3.name).title(), (255, 255, 255), playerChar3.xCoord + 50, playerChar3.yCoord - 60)
-
-    if AIFighter.alive == True:
-        screen.blit(FIGHTERimageAI, (AIFighter.xCoord,AIFighter.yCoord))
-        show_text(str("HP: ") + str(AIFighter.hpCurrent), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 20)
-        show_text(str("EXP: ") + str(AIFighter.exp), (255, 0, 0), AIFighter.xCoord + 50, AIFighter.yCoord - 40)
-        show_text(str(AIFighter.name).title(), (255, 255, 255), AIFighter.xCoord + 50, AIFighter.yCoord - 60)
-
-    if AITank.alive == True:
-        screen.blit(TANKimageAI, (AITank.xCoord,AITank.yCoord))
-        show_text(str("HP: ") + str(AITank.hpCurrent), (255, 0, 0), AITank.xCoord + 50, AITank.yCoord - 20)
-        show_text(str("EXP: ") + str(AITank.exp), (255, 0, 0), AITank.xCoord + 50, AITank.yCoord - 40)
-        show_text(str(AITank.name).title(), (255, 255, 255), AITank.xCoord + 50, AITank.yCoord - 60)
-
-    if AIFighter2.alive == True:
-        screen.blit(FIGHTERimageAI, (AIFighter2.xCoord,AIFighter2.yCoord))
-        show_text(str("HP: ") + str(AIFighter2.hpCurrent), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 20)
-        show_text(str("EXP: ") + str(AIFighter2.exp), (255, 0, 0), AIFighter2.xCoord + 50, AIFighter2.yCoord - 40)
-        show_text(str(AIFighter2.name).title(), (255, 255, 255), AIFighter2.xCoord + 50, AIFighter2.yCoord - 60)'''
-
     pygame.display.flip()
 
 
 def move(attacker, defender):
-    originalX = attacker.xCoord
-    originalY = attacker.yCoord
 
-    for _ in range(30):
-        attacker.xCoord = attacker.xCoord + (defender.xCoord - originalX)/30
-        attacker.yCoord = attacker.yCoord + (defender.yCoord - originalY)/30
+    global gamestate, GlobalAttacker  , GlobalDefender , GlobalX, GlobalY
+
+    TimeMove = 0.5 #time taken to move in seconds
+    if gamestate != 3:
+        GlobalX = attacker.xCoord
+        GlobalY = attacker.yCoord
+        GlobalAttacker = attacker
+        GlobalDefender = defender 
+
+
+        gamestate = 3
+    elif gamestate == 3:
+        
+        attacker.xCoord = attacker.xCoord + (defender.xCoord - GlobalX)/(60*TimeMove)
+        attacker.yCoord = attacker.yCoord + (defender.yCoord -  GlobalY)/(60*TimeMove)
         refreshScreen()
-        pygame.display.flip() 
-
-    attacker.xCoord = originalX
-    attacker.yCoord = originalY
-    refreshScreen()
+        if (defender.xCoord + 20 >= attacker.xCoord >= defender.xCoord - 20) and (defender.yCoord +20  >= attacker.yCoord >= defender.yCoord -20):
+            if OriGamestate == 1:
+                gamestate = 2
+                attacker.xCoord = GlobalX
+                attacker.yCoord = GlobalY
+                GlobalAttacker = None
+                GlobalDefender = None 
+            elif OriGamestate == 2:
+                gamestate = 1
+                attacker.xCoord = GlobalX
+                attacker.yCoord = GlobalY
+                GlobalAttacker = None
+                GlobalDefender = None 
+        else:
+            pass
 
 
 
@@ -170,42 +155,6 @@ def CheckAliveAll():
             game_log.append(f"{char.name} was promoted to rank {char.rank}\n")
             j["rank"] = char.rank
         
-    '''if playerChar1.checkAliveEXP() == False and a == 0:
-        game_log.append(f"{playerChar1.name} died\n")
-        a = 1
-    elif isinstance(playerChar1.checkAliveEXP(), int) and :
-        game_log.append(f"{playerChar1.name} was promoted to rank {playerChar1.rank}\n")
-
-    if playerChar2.checkAliveEXP() == False and b == 0:
-        game_log.append(f"{playerChar2.name} died\n")
-        b = 1
-    elif isinstance(playerChar2.checkAliveEXP(), int):
-        game_log.append(f"{playerChar2.name} was promoted to rank {playerChar2.rank}\n")
-
-    if playerChar3.checkAliveEXP() == False and c == 0:
-        game_log.append(f"{playerChar3.name} died\n")
-        c = 1
-    elif isinstance(playerChar3.checkAliveEXP(), int):
-        game_log.append(f"{playerChar3.name} was promoted to rank {playerChar3.rank}\n")
-
-    if AIFighter.checkAliveEXP() == False and d == 0:
-        game_log.append(f"{AIFighter.name} died\n")
-        d = 1
-    elif isinstance(AIFighter.checkAliveEXP(), int):
-        game_log.append(f"{AIFighter.name} was promoted to rank {AIFighter.rank}\n")
-
-    if AITank.checkAliveEXP() == False and e == 0:
-        game_log.append(f"{AITank.name} died\n")
-        e = 1
-    elif isinstance(AITank.checkAliveEXP(), int):
-        game_log.append(f"{AITank.name} was promoted to rank {AITank.rank}\n")
-
-    if AIFighter2.checkAliveEXP() == False and f == 0:
-        game_log.append(f"{AIFighter2.name} died\n")
-        f = 1
-    elif isinstance(AIFighter2.checkAliveEXP(), int):
-        game_log.append(f"{AIFighter2.name} was promoted to rank {AIFighter2.rank}\n")
-'''
 
 
 game_log = ["game started\n"]
@@ -369,6 +318,7 @@ while running == True:
         
         
     elif gamestate == 1:
+        OriGamestate = gamestate
         refreshScreen()
         winCondition()
         try: 
@@ -377,17 +327,21 @@ while running == True:
             running = False #stop the while loop
 
         turn += 1
-        gamestate = 2
     elif gamestate == 2:
+        OriGamestate = gamestate
         refreshScreen()
         if winCondition() == True:
             game_log.append("player won")
-            gamestate = 1
         else:
             AIturn()
 
         turn += 1
-        gamestate = 1
+
+    elif gamestate == 3:
+        refreshScreen()
+        move(GlobalAttacker, GlobalDefender)
+
+
 
 
         
