@@ -15,22 +15,38 @@ pygame.display.set_caption(" GAME ")
 def LoadImg(img):
     return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
 
+def LoadImg2(Class_Dir,img):
+    return pygame.image.load(os.path.join(Class_Dir,img)).convert_alpha()
+
 def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
     return pygame.transform.flip(img, verticalFlip, horizontalFlip)
 
 # load all images after this line
 Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
-BGimage = LoadImg('pygameBACKGROUND.png')
+Tank_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank')
+Warrior_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Warrior')
+TankStand_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank', 'Stand')
+
+StandList = [0,1,2,3,0]
+RunList = [0,1,2,3,4]
+AttackListW = [0,1,2,3,4]
+AttackListT = [0,1,2,3,0]
+G_index = 0
+N_Counter = 0
+
+
+BGimage = LoadImg('pygameBACKGROUND'+'.png')
 TANKimage = LoadImg('pygameTANK.png')
 FIGHTERimage = LoadImg('pygameFIGHTER.png')
 HEALERimage = LoadImg('pygameHEALER.png')
+testimga   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+
 FIGHTERimageAI = FlipImg(FIGHTERimage, True, False)
 TANKimageAI = FlipImg(TANKimage, True, False)
 GlobalAttacker = None
 GlobalDefender = None
 GlobalX = None
 GlobalY = None
-
 
 screen = pygame.display.get_surface()
 
@@ -45,7 +61,7 @@ def ChooseChar(x, y):
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
-                    Char =  pygameClasses.character(x, y, 200, 50, 20, TANKimage, True , 0)
+                    Char =  pygameClasses.character(x, y, 200, 50, 20, testimga, True , 0)
                     Char.name = "tank"
                     CharChosen = True
                     
@@ -269,6 +285,14 @@ def playerTurn():
                 else:
                         pass     
 
+def Idleloop(G_index, N_Counter):
+    N_Counter = N_Counter + 1
+    if N_Counter >= 60:
+        N_Counter = 0
+        G_index = G_index + 1
+        if G_index >= 5:
+            G_index = 0
+
 
 
 def winCondition():
@@ -310,7 +334,10 @@ while running == True:
         if event.type == pygame.QUIT:
             running = False
     
+
+    Idleloop(N_Counter, G_index)
     
+
     clock.tick(60)
 
     if gamestate == 0:
