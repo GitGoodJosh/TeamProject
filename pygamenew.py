@@ -26,13 +26,17 @@ Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
 Tank_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank')
 Warrior_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Warrior')
 TankStand_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank', 'Stand')
+TankRun_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank', 'Run')
 
-StandList = [0,1,2,3,0]
+StandList = [0,1,2,3,2]
 RunList = [0,1,2,3,4]
 AttackListW = [0,1,2,3,4]
-AttackListT = [0,1,2,3,0]
+AttackListT = [0,1,1,2,3]
 G_index = 0
 N_Counter = 0
+SelectA = None
+SelectD = None
+PlayerHasAttacked = False
 
 
 BGimage = LoadImg('pygameBACKGROUND'+'.png')
@@ -52,6 +56,21 @@ screen = pygame.display.get_surface()
 
 # load all images before this line
 # ------------------------------------------------- #
+def Idleloop():
+    global G_index, N_Counter, testimga
+    N_Counter = N_Counter + 1
+    if N_Counter >= 20:
+        N_Counter = 0
+        G_index = G_index + 1
+        if G_index >= 5:
+            G_index = 0
+    #print("G",G_index , "N",N_Counter)
+
+    testimga   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+    playerChar1.image = testimga
+ #   print(testimga)
+
+
 def ChooseChar(x, y):
     CharChosen = False
     Char = None
@@ -83,6 +102,7 @@ def show_text( msg, color, x, y, size = 30 ):
 
 def refreshScreen():
     CheckAliveAll()
+    Idleloop()
     screen.blit(BGimage, (0,0))
     for char in (AIlist + playerList):
         if char.alive == True:
@@ -98,14 +118,15 @@ def refreshScreen():
 
 def move(attacker, defender):
 
-    global gamestate, GlobalAttacker  , GlobalDefender , GlobalX, GlobalY
+    global gamestate, GlobalAttacker  , GlobalDefender , GlobalX, GlobalY,PlayerHasAttacked
 
     TimeMove = 0.5 #time taken to move in seconds
     if gamestate != 3:
         GlobalX = attacker.xCoord
         GlobalY = attacker.yCoord
         GlobalAttacker = attacker
-        GlobalDefender = defender 
+        GlobalDefender = defender
+         
 
 
         gamestate = 3
@@ -113,20 +134,27 @@ def move(attacker, defender):
         
         attacker.xCoord = attacker.xCoord + (defender.xCoord - GlobalX)/(60*TimeMove)
         attacker.yCoord = attacker.yCoord + (defender.yCoord -  GlobalY)/(60*TimeMove)
-        refreshScreen()
+#        refreshScreen()
         if (defender.xCoord + 20 >= attacker.xCoord >= defender.xCoord - 20) and (defender.yCoord +20  >= attacker.yCoord >= defender.yCoord -20):
+            dmg = GlobalDefender.takeDMG(GlobalAttacker.attack)
+            game_log.append(f"{GlobalAttacker.name} attacked {GlobalDefender.name} for {dmg} damage\n")
+            
             if OriGamestate == 1:
                 gamestate = 2
                 attacker.xCoord = GlobalX
                 attacker.yCoord = GlobalY
                 GlobalAttacker = None
                 GlobalDefender = None 
+                PlayerHasAttacked = True
+
+
             elif OriGamestate == 2:
                 gamestate = 1
                 attacker.xCoord = GlobalX
                 attacker.yCoord = GlobalY
                 GlobalAttacker = None
                 GlobalDefender = None 
+
         else:
             pass
 
@@ -141,6 +169,8 @@ def move(attacker, defender):
 
 
 playerChar1 = ChooseChar(0, 150)
+
+
 playerChar2 = ChooseChar(100, 300)
 playerChar3 = ChooseChar(0, 450)
 AIFighter = pygameClasses.character(850, 150, 15, 70, 10, FIGHTERimageAI, True , 0)
@@ -232,66 +262,62 @@ def CurrDefender(index):
     elif turn % 2 == 0:
         return AIlist[index - 1]
 
-  
+Defender = None
+Attacker  = None
 
-def playerTurn():
-    SelectA = None
-    SelectD = None
+def playerTurn(key):
+#    SelectA = None
+#    SelectD = None
+    global SelectA, SelectD, Defender, Attacker, PlayerHasAttacked, turn
     PlayerHasAttacked = False   
     
 
-    while PlayerHasAttacked == False:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            elif event.type == pygame.KEYDOWN:
-                # print("SA",SelectA)
-
+    if PlayerHasAttacked == False:
+ #     
 #get number from keydown and use it to choose attacker
                 if SelectA == None:
                 
-                    key = (chr(int(event.key)))  
-                    # print("A1",key)
-                    if key not in ['1', '2', '3']:
-                        pass
-                    else:
-                        Attacker = CurrAttacker(int(key))
-                        if Attacker.alive == True:
-                            SelectA = True
-                        elif Attacker.alive == False:
-                            pass
-                elif SelectA == True and SelectD == None:  # choose defender using number keys
-                    key = (chr(int(event.key)))
-                    # print("D1",key)
-                    if key not in ['1', '2', '3']:
-                        pass
-                    else:
-                        Defender = CurrDefender(int(key))
-                        if Defender.alive == True:
-                            SelectD = True
+                    try:# print("A1",key)
+                        if key not in ['1', '2', '3']:
+                            key = None
                         else:
-                            pass
-                        
+                            Attacker = CurrAttacker(int(key))
+                            key = None
+                            if Attacker.alive == True:
+                                SelectA = True
+                            elif Attacker.alive == False:
+                                Attacker = None
+
+                                pass
+                    except NameError:
+                        pass
+                elif SelectA == True and SelectD == None:  # choose defender using number keys
+                    # print("D1",key)
+                    try:
+                        if key not in ['1', '2', '3']:
+                            key = None
+                        else:
+                            Defender = CurrDefender(int(key))
+                            key = None
+                            if Defender.alive == True:
+                                SelectD = True
+                            else:
+                                pass
+                    except NameError:
+                        pass
+                                
                 if SelectA == True and SelectD == True:
-                    if Attacker.alive == True and Defender.alive == True:
+ #                   if Attacker.alive == True and Defender.alive == True:
                         move(Attacker, Defender)
-                        dmg = Defender.takeDMG(Attacker.attack)
-                        game_log.append(f"{Attacker.name} attacked {Defender.name} for {dmg} damage\n")
                         PlayerHasAttacked = True
                         SelectA = None
                         SelectD = None
                         Defender = None
                         Attacker = None
-                else:
-                        pass     
+                        turn += 1
+ #               else:
+  #                      pass     
 
-def Idleloop(G_index, N_Counter):
-    N_Counter = N_Counter + 1
-    if N_Counter >= 60:
-        N_Counter = 0
-        G_index = G_index + 1
-        if G_index >= 5:
-            G_index = 0
 
 
 
@@ -306,57 +332,68 @@ def winCondition():
 
 
 def AIturn():
-    global turn, gamestate
-    Attacker = CurrAttacker(random.randint(0,2)) 
-    Defender = CurrDefender(random.randint(0,2)) # choose random attacker and defender
-    while Attacker.alive == False or Attacker == None: #keep generating until attacker chosen is alive
-        Rand = random.randint(0,2)
-        Attacker = CurrAttacker(Rand)
-        print("Random Attacker", Rand)
-    
-    while Defender.alive == False or Defender == None: # line 330 but for defender
-        Rand = random.randint(0,2)
-        Defender = CurrDefender(Rand)
-        print("Random Defender", Rand)
+    print("AI turn")
+    global turn, gamestate, GlobalAttacker, GlobalDefender
+    if gamestate == 2:
+        Attacker = CurrAttacker(random.randint(0,2)) 
+        Defender = CurrDefender(random.randint(0,2)) # choose random attacker and defender
+        while Attacker.alive == False or Attacker == None: #keep generating until attacker chosen is alive
+            Rand = random.randint(0,2)
+            Attacker = CurrAttacker(Rand)
+            print("Random Attacker", Rand)
+        
+        while Defender.alive == False or Defender == None: # line 330 but for defender
+            Rand = random.randint(0,2)
+            Defender = CurrDefender(Rand)
+            print("Random Defender", Rand)
 
-    if Attacker.alive == True and Defender.alive == True: #carry out attack
-        move(Attacker, Defender)
-        dmg = Defender.takeDMG(Attacker.attack)
-        game_log.append(f"{Attacker.name} attacked {Defender.name} for {dmg} damage\n")
+        if Attacker.alive == True and Defender.alive == True: #carry out attack
+            GlobalAttacker = Attacker
+            GlobalDefender = Defender
+            move(Attacker, Defender)
+#            dmg = Defender.takeDMG(Attacker.attack)
+#            game_log.append(f"{Attacker.name} attacked {Defender.name} for {dmg} damage\n")
 
     else:
-        pass
-    
+            pass
+        
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
+    refreshScreen()
+    ky = None
+
     for event in pygame.event.get():
     
         if event.type == pygame.QUIT:
             running = False
+            pygame.quit()
+        elif event.type == pygame.KEYDOWN:
+            ky = (chr(int(event.key)))
     
 
-    Idleloop(N_Counter, G_index)
+
     
 
     clock.tick(60)
 
     if gamestate == 0:
-        refreshScreen()
-        
+    #    refreshScreen()
+       pass 
         
     elif gamestate == 1:
         OriGamestate = gamestate
-        refreshScreen()
+    #    refreshScreen()
         winCondition()
         try: 
-            playerTurn()
-        except pygame.error: #avoid getting error when the while loop tries to get events in playerturn function after the screen has been closed
-            running = False #stop the while loop
+            playerTurn(ky)
+        except NameError: #avoid getting error when the while loop tries to get events in playerturn function after the screen has been closed
+            pass
+            #running = False #stop the while loop
 
-        turn += 1
+        
     elif gamestate == 2:
         OriGamestate = gamestate
-        refreshScreen()
+    #    refreshScreen()
         if winCondition() == True:
             game_log.append("player won")
         else:
@@ -365,7 +402,7 @@ while running == True:
         turn += 1
 
     elif gamestate == 3:
-        refreshScreen()
+    #    refreshScreen()
         move(GlobalAttacker, GlobalDefender)
 
 
