@@ -16,10 +16,10 @@ def LoadImg(img):
     return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
 
 def LoadImg2(Class_Dir,img):
-    return pygame.image.load(os.path.join(Class_Dir,img)).convert_alpha()
+    return pygame.transform.scale(pygame.image.load(os.path.join(Class_Dir,img)).convert_alpha(), (100, 100))
 
-def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
-    return pygame.transform.flip(img, verticalFlip, horizontalFlip)
+def FlipImg(img, horizontalFlip:bool, verticalFlip:bool):
+    return pygame.transform.flip(img, horizontalFlip, verticalFlip)
 
 # load all images after this line
 Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
@@ -45,14 +45,16 @@ PlayerHasAttacked = False
 
 
 BGimage = LoadImg('pygameBACKGROUND'+'.png')
-TANKimage = LoadImg('pygameTANK.png')
-FIGHTERimage = LoadImg('pygameFIGHTER.png')
-HEALERimage = LoadImg('pygameHEALER.png')
+
 StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
-StandfighterImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+StandWarriorImg   = FlipImg(LoadImg2(Warriorstand_dir,str(StandList[G_index])+'.png'),True,False)
+# AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
+# AttackWarriorImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListW[G_index])+'.png'),True,False)
 
+TANKimage = StandTankImg
+Warriorimage = StandWarriorImg
 
-FIGHTERimageAI = FlipImg(FIGHTERimage, True, False)
+WarriorimageAI = FlipImg(Warriorimage, True, False)
 TANKimageAI = FlipImg(TANKimage, True, False)
 GlobalAttacker = None
 GlobalDefender = None
@@ -64,17 +66,18 @@ screen = pygame.display.get_surface()
 # load all images before this line
 # ------------------------------------------------- #
 def Idleloop():
-    global G_index, N_Counter, StandTankImg
+    global G_index, N_Counter, StandTankImg, StandWarriorImg, AttackTankImg, AttackWarriorImg
     N_Counter = N_Counter + 1
     if N_Counter >= 20:
         N_Counter = 0
         G_index = G_index + 1
         if G_index >= 5:
             G_index = 0
-    #print("G",G_index , "N",N_Counter)
 
     StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
-    AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
+    StandWarriorImg   = FlipImg(LoadImg2(Warriorstand_dir,str(StandList[G_index])+'.png'),True,False)
+    # AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
+    # AttackWarriorImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListW[G_index])+'.png'),True,False)
     
  #   print(StandTankImg)
 
@@ -90,12 +93,13 @@ def ChooseChar(x, y):
                 if event.key == pygame.K_t:
                     Char =  pygameClasses.character(x, y, 200, 50, 20, StandTankImg, True , 0)
                     Char.name = "tank"
+                    Char.Class = 'Tank'
                     CharChosen = True
                     
                 elif event.key == pygame.K_f:
-                    Char = pygameClasses.character(x, y, 150, 70, 10, FIGHTERimage, True , 0)
-                    Char.name = "fighter"
-
+                    Char = pygameClasses.character(x, y, 150, 70, 10, Warriorimage, True , 0)
+                    Char.name = "Warrior"
+                    Char.Class = 'Warrior'
                     CharChosen = True
     return Char
 
@@ -111,7 +115,16 @@ def show_text( msg, color, x, y, size = 30 ):
 def refreshScreen():
     CheckAliveAll()
     Idleloop()
-    playerChar1.image = StandTankImg
+    for char in playerList:
+        if char.Class == 'Tank':
+            char.image = StandTankImg
+        if char.Class == 'Warrior':
+            char.image = StandWarriorImg
+    for char in AIlist:
+        if char.Class == 'Tank':
+            char.image = FlipImg(StandTankImg, True, False)
+        if char.Class == 'Warrior':
+            char.image = FlipImg(StandWarriorImg, True, False)
     screen.blit(BGimage, (0,0))
     for char in playerList:
         if char.alive == True:
@@ -190,21 +203,19 @@ def move(attacker, defender):
 
 
 playerChar1 = ChooseChar(0, 150)
-
-
 playerChar2 = ChooseChar(100, 300)
 playerChar3 = ChooseChar(0, 450)
-AIFighter = pygameClasses.character(850, 150, 15, 70, 10, FIGHTERimageAI, True , 0)
-AITank = pygameClasses.character(750, 300, 20, 50, 20, TANKimageAI, True , 0)
-AIFighter2 = pygameClasses.character(870, 450, 15, 70, 10, FIGHTERimageAI, True , 0)
+AIWarrior = pygameClasses.character(850, 150, 15, 70, 10, WarriorimageAI, True , 'Warrior')
+AITank = pygameClasses.character(750, 300, 20, 50, 20, TANKimageAI, True , 'Tank')
+AIWarrior2 = pygameClasses.character(870, 450, 15, 70, 10, WarriorimageAI, True , 'Warrior')
 
 characters = {
             "playerChar1" : {"instance" : playerChar1 ,"rank" : "1", "death added?" : "no"},
             "playerChar2" : {"instance" : playerChar2 ,"rank" :"1", "death added?" : "no"},
             "playerChar3" : {"instance" : playerChar3 ,"rank" :"1", "death added?" : "no"},
-            "AIFighter" : {"instance" : AIFighter ,"rank" :"1", "death added?" : "no"},
+            "AIWarrior" : {"instance" : AIWarrior ,"rank" :"1", "death added?" : "no"},
             "AITank" : {"instance" : AITank ,"rank" :"1", "death added?" : "no"},
-            "AIFighter2" : {"instance" : AIFighter2 ,"rank" :"1", "death added?" : "no"},
+            "AIWarrior2" : {"instance" : AIWarrior2 ,"rank" :"1", "death added?" : "no"},
 }
 
 
@@ -227,7 +238,7 @@ def CheckAliveAll():
 game_log = ["game started\n"]
 
 playerList = [playerChar1, playerChar2, playerChar3]   
-AIlist = [AIFighter, AITank, AIFighter2] 
+AIlist = [AIWarrior, AITank, AIWarrior2] 
 i = 0
 for char in playerList:  
     i += 1
@@ -343,7 +354,7 @@ def playerTurn(key):
 
 
 def winCondition():
-    if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
+    if AIWarrior.alive == False and AIWarrior2.alive == False and AITank.alive == False:
         show_text("YOU WIN!!!", (0, 0, 255), 300, 100, 100)
         pygame.display.flip()
         return 1

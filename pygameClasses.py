@@ -5,7 +5,7 @@ import time
 
 # define all classes here
 class character():
-    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, exp):
+    def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, Class):
         self.xCoord = x
         self.yCoord = y 
         self.hpMax = maxHp
@@ -14,9 +14,10 @@ class character():
         self.defense = Defense
         self.image = charImage
         self.alive = status
-        self.exp = exp
+        self.exp = 0
         self.name = str("AI" + str(random.randint(0,99)))
         self.rank = 1
+        self.Class = Class
     def takeDMG(self, attackApplied):
         print(self.hpCurrent)
         damage = attackApplied - self.defense + random.randint(-10, 10)
