@@ -13,13 +13,21 @@ pygame.display.set_mode(screensize)
 pygame.display.set_caption(" GAME ")
 # Image Load Function
 def LoadImg(img):
-    return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
-
+    try:
+        return pygame.image.load(os.path.join(Asset_dir,img)).convert_alpha()
+    except pygame.error:
+        pass
 def LoadImg2(Class_Dir,img):
-    return pygame.transform.scale(pygame.image.load(os.path.join(Class_Dir,img)).convert_alpha(), (100, 100))
+    try:
+        return pygame.image.load(os.path.join(Class_Dir,img)).convert_alpha()
+    except pygame.error:
+        pass
 
 def FlipImg(img, horizontalFlip:bool, verticalFlip:bool):
-    return pygame.transform.flip(img, horizontalFlip, verticalFlip)
+    try:
+        return pygame.transform.flip(img, horizontalFlip, verticalFlip)
+    except TypeError:
+        pass
 
 # load all images after this line
 Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
@@ -38,18 +46,21 @@ RunList = [0,1,2,3,4]
 AttackListW = [0,1,2,3,4]
 AttackListT = [0,1,1,2,3]
 G_index = 0
-N_Counter = 0
+N_Counter = 0 #idleloop
+H_index = 0
+M_Counter = 0 #attackloop
 SelectA = None
 SelectD = None
 PlayerHasAttacked = False
+inAttack = None
 
 
 BGimage = LoadImg('pygameBACKGROUND'+'.png')
 
 StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
 StandWarriorImg   = FlipImg(LoadImg2(Warriorstand_dir,str(StandList[G_index])+'.png'),True,False)
-# AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
-# AttackWarriorImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListW[G_index])+'.png'),True,False)
+AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
+AttackWarriorImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListW[G_index])+'.png'),True,False)
 
 TANKimage = StandTankImg
 Warriorimage = StandWarriorImg
@@ -76,8 +87,7 @@ def Idleloop():
 
     StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
     StandWarriorImg   = FlipImg(LoadImg2(Warriorstand_dir,str(StandList[G_index])+'.png'),True,False)
-    # AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
-    # AttackWarriorImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListW[G_index])+'.png'),True,False)
+
     
  #   print(StandTankImg)
 
@@ -114,16 +124,17 @@ def show_text( msg, color, x, y, size = 30 ):
 
 def refreshScreen():
     CheckAliveAll()
+    global inAttack
     Idleloop()
     for char in playerList:
-        if char.Class == 'Tank':
+        if char.Class == 'Tank' and char != inAttack:
             char.image = StandTankImg
-        if char.Class == 'Warrior':
+        if char.Class == 'Warrior'and char != inAttack:
             char.image = StandWarriorImg
     for char in AIlist:
-        if char.Class == 'Tank':
+        if char.Class == 'Tank' and char != inAttack:
             char.image = FlipImg(StandTankImg, True, False)
-        if char.Class == 'Warrior':
+        if char.Class == 'Warrior' and char != inAttack:
             char.image = FlipImg(StandWarriorImg, True, False)
     screen.blit(BGimage, (0,0))
     for char in playerList:
@@ -149,10 +160,25 @@ def refreshScreen():
 
     pygame.display.flip()
 
+def AttackLoop(loop_number):
+    global H_index, M_Counter, AttackTankImg, AttackWarriorImg
+    print(str(H_index))
+    M_Counter = M_Counter + 1
+    if loop_number > 10:
+        return "done"
+    if M_Counter >= 5:
+        M_Counter = 0
+        H_index = H_index + 1
+        if H_index >= 5:
+            H_index = 0
+            
 
+    AttackTankImg   = FlipImg(LoadImg2(TankAttack_dir,str(AttackListT[H_index])+'.png'),True,False)
+    AttackWarriorImg   = FlipImg(LoadImg2(WarriorAttack_dir,str(AttackListW[H_index])+'.png'),True,False)
+
+AttackLoopCounter = 0
 def move(attacker, defender):
-
-    global gamestate, GlobalAttacker  , GlobalDefender , GlobalX, GlobalY,PlayerHasAttacked
+    global gamestate, GlobalAttacker, GlobalDefender , GlobalX, GlobalY, PlayerHasAttacked, AttackLoopCounter, inAttack
 
     TimeMove = 0.5 #time taken to move in seconds
     if gamestate != 3:
@@ -160,34 +186,51 @@ def move(attacker, defender):
         GlobalY = attacker.yCoord
         GlobalAttacker = attacker
         GlobalDefender = defender
-         
-
-
         gamestate = 3
     elif gamestate == 3:
+        if 100 <= defender.xCoord - attacker.xCoord or defender.xCoord - attacker.xCoord <= -100: #and (defender.yCoord +100  >= attacker.yCoord >= defender.yCoord -100) == False:
+            attacker.xCoord = attacker.xCoord + (defender.xCoord - GlobalX)/(60*TimeMove)
+            attacker.yCoord = attacker.yCoord + (defender.yCoord -  GlobalY)/(60*TimeMove)
         
-        attacker.xCoord = attacker.xCoord + (defender.xCoord - GlobalX)/(60*TimeMove)
-        attacker.yCoord = attacker.yCoord + (defender.yCoord -  GlobalY)/(60*TimeMove)
-#        refreshScreen()
-        if (defender.xCoord + 20 >= attacker.xCoord >= defender.xCoord - 20) and (defender.yCoord +20  >= attacker.yCoord >= defender.yCoord -20):
-            dmg = GlobalDefender.takeDMG(GlobalAttacker.attack)
-            game_log.append(f"{GlobalAttacker.name} attacked {GlobalDefender.name} for {dmg} damage\n")
+
+        if (100 >= defender.xCoord - attacker.xCoord >= -100): #or defender.xCoord - attacker.xCoord >= -100): #and (defender.yCoord +120  >= attacker.yCoord >= defender.yCoord -120):
+            AttackLoop(AttackLoopCounter)
+            AttackLoopCounter += 1
+            inAttack = attacker
+            if attacker.Class == 'Tank':
+                if attacker in playerList:
+                    attacker.image = AttackTankImg
+                elif attacker in AIlist:
+                    attacker.image = FlipImg(AttackTankImg, True, False)
+            if attacker.Class == 'Warrior':
+                if attacker in playerList:
+                    attacker.image = AttackWarriorImg
+                elif attacker in AIlist:
+                    attacker.image = FlipImg(AttackWarriorImg, True, False)
+            if AttackLoop(AttackLoopCounter) == "done":
+                dmg = GlobalDefender.takeDMG(GlobalAttacker.attack)
+                game_log.append(f"{GlobalAttacker.name} attacked {GlobalDefender.name} for {dmg} damage\n") 
+                AttackLoopCounter = 0
+                if OriGamestate == 1:
+                    gamestate = 2
+                    attacker.xCoord = GlobalX
+                    attacker.yCoord = GlobalY
+                    GlobalAttacker = None
+                    GlobalDefender = None 
+                    PlayerHasAttacked = True
+                    inAttack = None
+                elif OriGamestate == 2:
+                    gamestate = 1
+                    attacker.xCoord = GlobalX
+                    attacker.yCoord = GlobalY
+                    GlobalAttacker = None
+                    GlobalDefender = None 
+                    inAttack = None
+
+            else:
+                return
             
-            if OriGamestate == 1:
-                gamestate = 2
-                attacker.xCoord = GlobalX
-                attacker.yCoord = GlobalY
-                GlobalAttacker = None
-                GlobalDefender = None 
-                PlayerHasAttacked = True
 
-
-            elif OriGamestate == 2:
-                gamestate = 1
-                attacker.xCoord = GlobalX
-                attacker.yCoord = GlobalY
-                GlobalAttacker = None
-                GlobalDefender = None 
 
         else:
             pass
