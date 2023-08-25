@@ -23,10 +23,15 @@ def FlipImg(img, verticalFlip:bool, horizontalFlip:bool):
 
 # load all images after this line
 Asset_dir = os.path.join(os.path.dirname(__file__), 'Assets')
-Tank_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank')
 Warrior_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Warrior')
+Warriorstand_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Warrior', 'Stand')
+WarriorRun_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Warrior', 'Run')
+WarriorAttack_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Warrior', 'Attack')
+
+Tank_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank')
 TankStand_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank', 'Stand')
 TankRun_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank', 'Run')
+TankAttack_dir = os.path.join(os.path.dirname(__file__), 'Assets', 'Tank', 'Attack')
 
 StandList = [0,1,2,3,2]
 RunList = [0,1,2,3,4]
@@ -43,7 +48,9 @@ BGimage = LoadImg('pygameBACKGROUND'+'.png')
 TANKimage = LoadImg('pygameTANK.png')
 FIGHTERimage = LoadImg('pygameFIGHTER.png')
 HEALERimage = LoadImg('pygameHEALER.png')
-testimga   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+StandfighterImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+
 
 FIGHTERimageAI = FlipImg(FIGHTERimage, True, False)
 TANKimageAI = FlipImg(TANKimage, True, False)
@@ -57,7 +64,7 @@ screen = pygame.display.get_surface()
 # load all images before this line
 # ------------------------------------------------- #
 def Idleloop():
-    global G_index, N_Counter, testimga
+    global G_index, N_Counter, StandTankImg
     N_Counter = N_Counter + 1
     if N_Counter >= 20:
         N_Counter = 0
@@ -66,9 +73,10 @@ def Idleloop():
             G_index = 0
     #print("G",G_index , "N",N_Counter)
 
-    testimga   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
-    playerChar1.image = testimga
- #   print(testimga)
+    StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),True,False)
+    AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
+    
+ #   print(StandTankImg)
 
 
 def ChooseChar(x, y):
@@ -80,7 +88,7 @@ def ChooseChar(x, y):
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
-                    Char =  pygameClasses.character(x, y, 200, 50, 20, testimga, True , 0)
+                    Char =  pygameClasses.character(x, y, 200, 50, 20, StandTankImg, True , 0)
                     Char.name = "tank"
                     CharChosen = True
                     
@@ -103,13 +111,26 @@ def show_text( msg, color, x, y, size = 30 ):
 def refreshScreen():
     CheckAliveAll()
     Idleloop()
+    playerChar1.image = StandTankImg
     screen.blit(BGimage, (0,0))
-    for char in (AIlist + playerList):
+    for char in playerList:
         if char.alive == True:
             screen.blit(char.image, (char.xCoord,char.yCoord))
-            show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 50, char.yCoord - 20)
-            show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 50, char.yCoord - 40)
-            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 50, char.yCoord - 60)
+            show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 10, char.yCoord - 20)
+            show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 10, char.yCoord - 40)
+            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 60)
+            show_text(str("ATK: ") + str(char.attack), (0, 0, 255), char.xCoord + 10, char.yCoord - 80)
+            show_text(str("DEF: ") + str(char.defense), (0, 0, 255), char.xCoord + 10, char.yCoord - 100)    
+        else:
+            pass
+    for char in AIlist:
+        if char.alive == True:
+            screen.blit(char.image, (char.xCoord,char.yCoord))
+            show_text(str("HP: ") + str(char.hpCurrent), (255, 0, 0), char.xCoord + 10, char.yCoord - 20)
+            show_text(str("EXP: ") + str(char.exp), (255, 0, 0), char.xCoord + 10, char.yCoord - 40)
+            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 60)
+            show_text(str("ATK: ") + str(char.attack), (255, 0, 0), char.xCoord + 10, char.yCoord - 80)
+            show_text(str("DEF: ") + str(char.defense), (255, 0, 0), char.xCoord + 10, char.yCoord - 100)
         else:
             pass
 
@@ -323,11 +344,16 @@ def playerTurn(key):
 
 def winCondition():
     if AIFighter.alive == False and AIFighter2.alive == False and AITank.alive == False:
-       return True
+        show_text("YOU WIN!!!", (0, 0, 255), 300, 100, 100)
+        pygame.display.flip()
+        return 1
+    elif playerChar1.alive == False and playerChar2.alive == False and playerChar3.alive == False :
+        show_text("YOU LOSE...", (255, 0, 0), 300, 100, 100)
+        pygame.display.flip()
+        return 2
     else:
         pass
 
-       # pygame.quit()
 
 
 
@@ -356,10 +382,12 @@ def AIturn():
 
     else:
             pass
-        
+playerWin = 0 
+aiWin = 0
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
 while running == True:
-    refreshScreen()
+    if playerWin == 0 and aiWin == 0:
+        refreshScreen()
     ky = None
 
     for event in pygame.event.get():
@@ -370,10 +398,6 @@ while running == True:
         elif event.type == pygame.KEYDOWN:
             ky = (chr(int(event.key)))
     
-
-
-    
-
     clock.tick(60)
 
     if gamestate == 0:
@@ -382,20 +406,27 @@ while running == True:
         
     elif gamestate == 1:
         OriGamestate = gamestate
-    #    refreshScreen()
-        winCondition()
-        try: 
-            playerTurn(ky)
-        except NameError: #avoid getting error when the while loop tries to get events in playerturn function after the screen has been closed
-            pass
-            #running = False #stop the while loop
+        if winCondition() == 2:
+            if aiWin == 0:
+                game_log.append("AI won")
+                aiWin += 1   
+                print(*game_log) 
+        else:
+            try: 
+                playerTurn(ky)
+            except NameError: #avoid getting error when the while loop tries to get events in playerturn function after the screen has been closed
+                pass
+                #running = False #stop the while loop
 
         
     elif gamestate == 2:
         OriGamestate = gamestate
     #    refreshScreen()
-        if winCondition() == True:
-            game_log.append("player won")
+        if winCondition() == 1:
+            if playerWin == 0:
+                game_log.append("player won")
+                playerWin += 1
+                print(*game_log)
         else:
             AIturn()
 
@@ -421,4 +452,4 @@ while running == True:
 # required to uninitialise unnecessary resources if running game as a part of a larger program 
 pygame.quit()
 
-print(*game_log)
+
