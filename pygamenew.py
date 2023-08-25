@@ -208,33 +208,30 @@ game_log = ["game started\n"]
 playerList = [playerChar1, playerChar2, playerChar3]   
 AIlist = [AIFighter, AITank, AIFighter2] 
 i = 0
-def nameset():
-    for char in playerList:  
-        i += 1
-        nameChosen = False
-        charNameByPlayer = ""
-        screen.fill((0, 0, 0))
-        while nameChosen == False: 
-            show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (255, 255, 255), 120, 100, 40)
-            show_text(str(charNameByPlayer), (255, 255, 255), 250, 300, 70)
-            pygame.display.flip()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                elif event.type == pygame.KEYDOWN:
-                    letter = chr(int(event.key))
-                    if event.key == pygame.K_RETURN:
-                        game_log.append(f"{char.name} was named {charNameByPlayer}\n")
-                        char.name = charNameByPlayer
-                        nameChosen = True
-                    elif event.key == pygame.K_BACKSPACE:
-                        charNameByPlayer = charNameByPlayer[:len(charNameByPlayer) - 1]
-                        screen.fill((0, 0, 0))
-                        pygame.display.flip()
-                    else:
-                        charNameByPlayer = charNameByPlayer + letter
-
-nameset()
+for char in playerList:  
+    i += 1
+    nameChosen = False
+    charNameByPlayer = ""
+    screen.fill((0, 0, 0))
+    while nameChosen == False: 
+        show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (255, 255, 255), 120, 100, 40)
+        show_text(str(charNameByPlayer), (255, 255, 255), 250, 300, 70)
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                letter = chr(int(event.key))
+                if event.key == pygame.K_RETURN:
+                    game_log.append(f"{char.name} was named {charNameByPlayer}\n")
+                    char.name = charNameByPlayer
+                    nameChosen = True
+                elif event.key == pygame.K_BACKSPACE:
+                    charNameByPlayer = charNameByPlayer[:len(charNameByPlayer) - 1]
+                    screen.fill((0, 0, 0))
+                    pygame.display.flip()
+                else:
+                    charNameByPlayer = charNameByPlayer + letter
                 
 
 # print BG and characters
