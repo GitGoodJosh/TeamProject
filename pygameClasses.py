@@ -19,7 +19,7 @@ class character():
         self.rank = 1
         self.Class = Class
     def takeDMG(self, attackApplied):
-        print(self.hpCurrent)
+        #print(self.hpCurrent)
         damage = attackApplied - self.defense + random.randint(-10, 10)
         self.hpCurrent = self.hpCurrent - damage
         if damage < 55:    

@@ -71,6 +71,8 @@ StandTankImg   = FlipImg(LoadImg2(TankStand_dir,str(StandList[G_index])+'.png'),
 StandWarriorImg   = FlipImg(LoadImg2(Warriorstand_dir,str(StandList[G_index])+'.png'),True,False)
 AttackTankImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListT[G_index])+'.png'),True,False)
 AttackWarriorImg   = FlipImg(LoadImg2(TankStand_dir,str(AttackListW[G_index])+'.png'),True,False)
+InstructionImg = LoadImg('Picture1'+'.png')
+InstructionImg2 = LoadImg('Picture2'+'.png')
 
 TANKimage = StandTankImg
 Warriorimage = StandWarriorImg
@@ -152,21 +154,23 @@ def refreshScreen():
     for char in playerList:
         if char.alive == True:
             screen.blit(char.image, (char.xCoord,char.yCoord))
-            show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 10, char.yCoord - 20)
-            show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 10, char.yCoord - 40)
-            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 60)
-            show_text(str("ATK: ") + str(char.attack), (0, 0, 255), char.xCoord + 10, char.yCoord - 80)
-            show_text(str("DEF: ") + str(char.defense), (0, 0, 255), char.xCoord + 10, char.yCoord - 100)    
+            show_text(str(char.name).title(), (0, 0, 255), char.xCoord + 10, char.yCoord - 95, 25)
+            show_text(str("Rank: ") + str(char.rank), (0, 0, 255), char.xCoord + 10, char.yCoord - 80, 25)
+            show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 10, char.yCoord - 65, 25)
+            show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 10, char.yCoord - 50, 25)
+            show_text(str("ATK: ") + str(char.attack), (0, 0, 255), char.xCoord + 10, char.yCoord - 35, 25)
+            show_text(str("DEF: ") + str(char.defense), (0, 0, 255), char.xCoord + 10, char.yCoord - 20, 25)    
         else:
             pass
     for char in AIlist:
         if char.alive == True:
             screen.blit(char.image, (char.xCoord,char.yCoord))
-            show_text(str("HP: ") + str(char.hpCurrent), (255, 0, 0), char.xCoord + 10, char.yCoord - 20)
-            show_text(str("EXP: ") + str(char.exp), (255, 0, 0), char.xCoord + 10, char.yCoord - 40)
-            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 60)
-            show_text(str("ATK: ") + str(char.attack), (255, 0, 0), char.xCoord + 10, char.yCoord - 80)
-            show_text(str("DEF: ") + str(char.defense), (255, 0, 0), char.xCoord + 10, char.yCoord - 100)
+            show_text(str(char.name).title(), (255, 0, 0), char.xCoord + 10, char.yCoord - 95,25)
+            show_text(str("Rank: ") + str(char.rank), (255, 0, 0), char.xCoord + 10, char.yCoord - 80, 25)
+            show_text(str("HP: ") + str(char.hpCurrent), (255, 0, 0), char.xCoord + 10, char.yCoord - 65, 25)
+            show_text(str("EXP: ") + str(char.exp), (255, 0, 0), char.xCoord + 10, char.yCoord - 50, 25)
+            show_text(str("ATK: ") + str(char.attack), (255, 0, 0), char.xCoord + 10, char.yCoord - 35, 25)
+            show_text(str("DEF: ") + str(char.defense), (255, 0, 0), char.xCoord + 10, char.yCoord - 20, 25)
         else:
             pass
 
@@ -175,7 +179,7 @@ AttackLoopCounter = 0
 
 def AttackLoop(loop_number):
     global H_index, M_Counter, AttackTankImg, AttackWarriorImg, AttackLoopCounter
-    print(str(H_index))
+    #print(str(H_index))
     M_Counter = M_Counter + 1
     AttackLoopCounter += 1
     if loop_number > 40:
@@ -223,6 +227,7 @@ def move(attacker, defender):
                     attacker.image = FlipImg(AttackWarriorImg, True, False)
             if AttackLoop(AttackLoopCounter) == "done":
                 dmg = GlobalDefender.takeDMG(GlobalAttacker.attack)
+                GlobalAttacker.exp += dmg
                 game_log.append(f"{GlobalAttacker.name} attacked {GlobalDefender.name} for {dmg} damage\n") 
                 AttackLoopCounter = 0
                 if OriGamestate == 1:
@@ -249,8 +254,30 @@ def move(attacker, defender):
         else:
             pass
 
+InstPg = 1
+while InstPg != 4:
+
+    screen.fill((0, 0, 0))
+    if InstPg == 1:
+        screen.blit(InstructionImg, (0,0))
+    elif InstPg == 2:
+        screen.blit(InstructionImg2, (0,0))
+    elif InstPg == 3:
+        screen.blit(BGimage, (0,0))
+        show_text("Choose Your Character. By Press Enter then (T/F)", (0, 0, 0), 100, 100, 50)
+    elif InstPg == 4:
+        break
 
 
+    pygame.display.flip()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.KEYDOWN: 
+            if event.key == pygame.K_RETURN:
+                InstPg += 1  
+            else:
+                pass
 
 
 
@@ -259,12 +286,12 @@ def move(attacker, defender):
             
 
 
-playerChar1 = ChooseChar(0, 150)
-playerChar2 = ChooseChar(100, 300)
-playerChar3 = ChooseChar(0, 450)
-AIWarrior = pygameClasses.character(850, 150, 150, 70, 10, WarriorimageAI, True , 'Warrior')
-AITank = pygameClasses.character(750, 300, 200, 50, 20, TANKimageAI, True , 'Tank')
-AIWarrior2 = pygameClasses.character(870, 450, 150, 70, 10, WarriorimageAI, True , 'Warrior')
+playerChar1 = ChooseChar(0, 180)
+playerChar2 = ChooseChar(100, 330)
+playerChar3 = ChooseChar(0, 480)
+AIWarrior = pygameClasses.character(850, 180, 150, 70, 10, WarriorimageAI, True , 'Warrior')
+AITank = pygameClasses.character(750, 330, 200, 50, 20, TANKimageAI, True , 'Tank')
+AIWarrior2 = pygameClasses.character(870, 480, 150, 70, 10, WarriorimageAI, True , 'Warrior')
 
 characters = {
             "playerChar1" : {"instance" : playerChar1 ,"rank" : "1", "death added?" : "no"},
@@ -302,6 +329,7 @@ for char in playerList:
     nameChosen = False
     charNameByPlayer = ""
     screen.fill((0, 0, 0))
+    modA = False
     while nameChosen == False: 
         show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (255, 255, 255), 120, 100, 40)
         show_text(str(charNameByPlayer), (255, 255, 255), 250, 300, 70)
@@ -310,7 +338,14 @@ for char in playerList:
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
-                letter = chr(int(event.key))
+                if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                    modA = True
+                    continue
+                if modA == True and event.key in range(97, 123):
+                    letter = chr(int(event.key)-32)
+                    modA = False
+                elif modA == False:
+                    letter = chr(int(event.key))
                 if event.key == pygame.K_RETURN:
                     game_log.append(f"{char.name} was named {charNameByPlayer}\n")
                     char.name = charNameByPlayer
@@ -426,7 +461,7 @@ def winCondition():
 
 
 def AIturn():
-    print("AI turn")
+    #print("AI turn")
     global turn, gamestate, GlobalAttacker, GlobalDefender
     if gamestate == 2:
         Attacker = CurrAttacker(random.randint(0,2)) 
@@ -434,12 +469,12 @@ def AIturn():
         while Attacker.alive == False or Attacker == None: #keep generating until attacker chosen is alive
             Rand = random.randint(0,2)
             Attacker = CurrAttacker(Rand)
-            print("Random Attacker", Rand)
+        #    print("Random Attacker", Rand)
         
         while Defender.alive == False or Defender == None: # line 330 but for defender
             Rand = random.randint(0,2)
             Defender = CurrDefender(Rand)
-            print("Random Defender", Rand)
+        #    print("Random Defender", Rand)
 
         if Attacker.alive == True and Defender.alive == True: #carry out attack
             GlobalAttacker = Attacker
@@ -479,6 +514,11 @@ while running == True:
     if gamestate == 0:
     #    refreshScreen()
        pass 
+
+
+
+
+
         
     elif gamestate == 1:
         OriGamestate = gamestate
