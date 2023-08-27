@@ -154,7 +154,7 @@ def refreshScreen():
     for char in playerList:
         if char.alive == True:
             screen.blit(char.image, (char.xCoord,char.yCoord))
-            show_text(str(char.name).title(), (0, 0, 255), char.xCoord + 10, char.yCoord - 95, 25)
+            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 95, 25)
             show_text(str("Rank: ") + str(char.rank), (0, 0, 255), char.xCoord + 10, char.yCoord - 80, 25)
             show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 10, char.yCoord - 65, 25)
             show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 10, char.yCoord - 50, 25)
@@ -165,7 +165,7 @@ def refreshScreen():
     for char in AIlist:
         if char.alive == True:
             screen.blit(char.image, (char.xCoord,char.yCoord))
-            show_text(str(char.name).title(), (255, 0, 0), char.xCoord + 10, char.yCoord - 95,25)
+            show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 95,25)
             show_text(str("Rank: ") + str(char.rank), (255, 0, 0), char.xCoord + 10, char.yCoord - 80, 25)
             show_text(str("HP: ") + str(char.hpCurrent), (255, 0, 0), char.xCoord + 10, char.yCoord - 65, 25)
             show_text(str("EXP: ") + str(char.exp), (255, 0, 0), char.xCoord + 10, char.yCoord - 50, 25)
@@ -365,7 +365,7 @@ refreshScreen()
 
             
 gamestate = 1
-# gamestate 0 = waiting, gamsestate 1 = players attack, gamestate 2 = ai attack
+# gamestate 0 = waiting, gamsestate 1 = players attack, gamestate 2 = ai attack gamestate 3 = moving
 
 
 clock = pygame.time.Clock()
