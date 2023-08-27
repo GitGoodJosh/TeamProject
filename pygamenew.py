@@ -12,7 +12,7 @@ screensize = (1000, 600)
 #TeamGame\TeamProject\Assets\pygameBACKGROUND.png
 pygame.display.set_mode(screensize)
 pygame.display.set_caption(" GAME ")
-pygame.mixer.pre_init(44100, 16, 2, 4096)
+pygame.mixer.pre_init(44100, 16, 2, 2048)
 
 # Image Load Function
 def LoadImg(img):
@@ -36,6 +36,13 @@ def PlayBGM(bgm):
     try:
         pygame.mixer.music.load(os.path.join(Asset_dir,bgm))
         pygame.mixer.music.play(-1, 0.0)
+    except pygame.error:
+        pass
+
+def PlaySFX(sfx):
+    try:
+        sfx2 =pygame.mixer.Sound(os.path.join(Asset_dir,sfx))
+        sfx2.play()
     except pygame.error:
         pass
 
@@ -238,6 +245,8 @@ def move(attacker, defender):
                     GlobalDefender = None 
                     PlayerHasAttacked = True
                     inAttack = None
+                    PlaySFX("attack.wav")
+
                 elif OriGamestate == 2:
                     gamestate = 1
                     attacker.xCoord = GlobalX
@@ -245,6 +254,7 @@ def move(attacker, defender):
                     GlobalAttacker = None
                     GlobalDefender = None 
                     inAttack = None
+                    PlaySFX("attack.wav")
 
             else:
                 return
@@ -289,17 +299,19 @@ while InstPg != 4:
 playerChar1 = ChooseChar(0, 180)
 playerChar2 = ChooseChar(100, 330)
 playerChar3 = ChooseChar(0, 480)
+PlaySFX("transion.wav")
+
 AIWarrior = pygameClasses.character(850, 180, 150, 70, 10, WarriorimageAI, True , 'Warrior')
 AITank = pygameClasses.character(750, 330, 200, 50, 20, TANKimageAI, True , 'Tank')
 AIWarrior2 = pygameClasses.character(870, 480, 150, 70, 10, WarriorimageAI, True , 'Warrior')
 
 characters = {
-            "playerChar1" : {"instance" : playerChar1 ,"rank" : "1", "death added?" : "no"},
-            "playerChar2" : {"instance" : playerChar2 ,"rank" :"1", "death added?" : "no"},
-            "playerChar3" : {"instance" : playerChar3 ,"rank" :"1", "death added?" : "no"},
-            "AIWarrior" : {"instance" : AIWarrior ,"rank" :"1", "death added?" : "no"},
-            "AITank" : {"instance" : AITank ,"rank" :"1", "death added?" : "no"},
-            "AIWarrior2" : {"instance" : AIWarrior2 ,"rank" :"1", "death added?" : "no"},
+            "playerChar1" : {"instance" : playerChar1 ,"rank" : 1, "death added?" : "no"},
+            "playerChar2" : {"instance" : playerChar2 ,"rank" :1, "death added?" : "no"},
+            "playerChar3" : {"instance" : playerChar3 ,"rank" :1, "death added?" : "no"},
+            "AIWarrior" : {"instance" : AIWarrior ,"rank" :1, "death added?" : "no"},
+            "AITank" : {"instance" : AITank ,"rank" :1, "death added?" : "no"},
+            "AIWarrior2" : {"instance" : AIWarrior2 ,"rank" :1, "death added?" : "no"},
 }
 
 
@@ -310,12 +322,15 @@ def CheckAliveAll():
     for i in characters.keys():
         j = characters[i]
         char = j["instance"]
-        if char.checkAliveEXP() == False and j["death added?"] == "no":
+        if char.checkAliveEXP()[0] == False and j["death added?"] == "no":
             game_log.append(f"{char.name} died\n")
             j["death added?"] = "yes"
-        elif isinstance(char.checkAliveEXP(), int) and j["rank"] != char.rank and char.alive == True:
+        if isinstance(char.checkAliveEXP()[1], int) and j["rank"] != char.rank and char.alive == True:
             game_log.append(f"{char.name} was promoted to rank {char.rank}\n")
-            j["rank"] = char.rank
+            j["rank"] = int(char.rank)
+            print("Level up! Alive")
+            PlaySFX("levelup.wav")
+            
         
 
 
@@ -357,7 +372,7 @@ for char in playerList:
                 else:
                     charNameByPlayer = charNameByPlayer + letter
                 
-
+PlaySFX("transion.wav")
 # print BG and characters
 
 refreshScreen()
@@ -448,10 +463,12 @@ def playerTurn(key):
 def winCondition():
     if AIWarrior.alive == False and AIWarrior2.alive == False and AITank.alive == False:
         show_text("YOU WIN!!!", (0, 0, 255), 300, 100, 100)
+        PlayBGM("win.wav")
         pygame.display.flip()
         return 1
     elif playerChar1.alive == False and playerChar2.alive == False and playerChar3.alive == False :
         show_text("YOU LOSE...", (255, 0, 0), 300, 100, 100)
+        PlaySFX("lose.wav")
         pygame.display.flip()
         return 2
     else:
