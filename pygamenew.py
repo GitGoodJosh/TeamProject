@@ -463,7 +463,6 @@ def playerTurn(key):
 def winCondition():
     if AIWarrior.alive == False and AIWarrior2.alive == False and AITank.alive == False:
         show_text("YOU WIN!!!", (0, 0, 255), 300, 100, 100)
-        PlayBGM("win.wav")
         pygame.display.flip()
         return 1
     elif playerChar1.alive == False and playerChar2.alive == False and playerChar3.alive == False :
@@ -560,6 +559,7 @@ while running == True:
                 game_log.append("player won")
                 playerWin += 1
                 print(*game_log)
+                PlayBGM("win.wav")
         else:
             AIturn()
 
