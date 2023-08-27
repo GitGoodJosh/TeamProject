@@ -166,7 +166,12 @@ def refreshScreen():
             show_text(str("HP: ") + str(char.hpCurrent), (0, 0, 255), char.xCoord + 10, char.yCoord - 65, 25)
             show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 10, char.yCoord - 50, 25)
             show_text(str("ATK: ") + str(char.attack), (0, 0, 255), char.xCoord + 10, char.yCoord - 35, 25)
-            show_text(str("DEF: ") + str(char.defense), (0, 0, 255), char.xCoord + 10, char.yCoord - 20, 25)    
+            show_text(str("DEF: ") + str(char.defense), (0, 0, 255), char.xCoord + 10, char.yCoord - 20, 25)  
+            try:
+                if Attacker == char:
+                    show_text(str("Attacker"), (255, 0, 0), char.xCoord + 10, char.yCoord - 5, 25) 
+            except NameError:
+                pass 
         else:
             pass
     for char in AIlist:
@@ -524,6 +529,9 @@ while running == True:
             pygame.quit()
         elif event.type == pygame.KEYDOWN:
             ky = (chr(int(event.key)))
+            if ky == "r":
+                Attacker = None
+                SelectA = None    
     
     clock.tick(60)
 
@@ -538,6 +546,7 @@ while running == True:
         
     elif gamestate == 1:
         OriGamestate = gamestate
+        
         if winCondition() == 2:
             if aiWin == 0:
                 game_log.append("AI won")
