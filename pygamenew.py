@@ -3,6 +3,7 @@ import time
 import pygame
 import pygameClasses
 import random
+import BGM
 
 pygame.init()
 # need list for pygame height and width (cannot usse two separate numbers)
@@ -11,6 +12,8 @@ screensize = (1000, 600)
 #TeamGame\TeamProject\Assets\pygameBACKGROUND.png
 pygame.display.set_mode(screensize)
 pygame.display.set_caption(" GAME ")
+pygame.mixer.pre_init(44100, 16, 2, 4096)
+
 # Image Load Function
 def LoadImg(img):
     try:
@@ -27,6 +30,13 @@ def FlipImg(img, horizontalFlip:bool, verticalFlip:bool):
     try:
         return pygame.transform.flip(img, horizontalFlip, verticalFlip)
     except TypeError:
+        pass
+
+def PlayBGM(bgm):
+    try:
+        pygame.mixer.music.load(os.path.join(Asset_dir,bgm))
+        pygame.mixer.music.play(-1, 0.0)
+    except pygame.error:
         pass
 
 # load all images after this line
@@ -73,6 +83,8 @@ GlobalX = None
 GlobalY = None
 
 screen = pygame.display.get_surface()
+
+PlayBGM("Hene.wav")
 
 # load all images before this line
 # ------------------------------------------------- #
@@ -159,14 +171,16 @@ def refreshScreen():
             pass
 
     pygame.display.flip()
+AttackLoopCounter = 0
 
 def AttackLoop(loop_number):
-    global H_index, M_Counter, AttackTankImg, AttackWarriorImg
+    global H_index, M_Counter, AttackTankImg, AttackWarriorImg, AttackLoopCounter
     print(str(H_index))
     M_Counter = M_Counter + 1
-    if loop_number > 10:
+    AttackLoopCounter += 1
+    if loop_number > 40:
         return "done"
-    if M_Counter >= 5:
+    if M_Counter >= 10:
         M_Counter = 0
         H_index = H_index + 1
         if H_index >= 5:
@@ -176,7 +190,7 @@ def AttackLoop(loop_number):
     AttackTankImg   = FlipImg(LoadImg2(TankAttack_dir,str(AttackListT[H_index])+'.png'),True,False)
     AttackWarriorImg   = FlipImg(LoadImg2(WarriorAttack_dir,str(AttackListW[H_index])+'.png'),True,False)
 
-AttackLoopCounter = 0
+
 def move(attacker, defender):
     global gamestate, GlobalAttacker, GlobalDefender , GlobalX, GlobalY, PlayerHasAttacked, AttackLoopCounter, inAttack
 
@@ -195,7 +209,7 @@ def move(attacker, defender):
 
         if (100 >= defender.xCoord - attacker.xCoord >= -100): #or defender.xCoord - attacker.xCoord >= -100): #and (defender.yCoord +120  >= attacker.yCoord >= defender.yCoord -120):
             AttackLoop(AttackLoopCounter)
-            AttackLoopCounter += 1
+
             inAttack = attacker
             if attacker.Class == 'Tank':
                 if attacker in playerList:
@@ -248,9 +262,9 @@ def move(attacker, defender):
 playerChar1 = ChooseChar(0, 150)
 playerChar2 = ChooseChar(100, 300)
 playerChar3 = ChooseChar(0, 450)
-AIWarrior = pygameClasses.character(850, 150, 15, 70, 10, WarriorimageAI, True , 'Warrior')
-AITank = pygameClasses.character(750, 300, 20, 50, 20, TANKimageAI, True , 'Tank')
-AIWarrior2 = pygameClasses.character(870, 450, 15, 70, 10, WarriorimageAI, True , 'Warrior')
+AIWarrior = pygameClasses.character(850, 150, 150, 70, 10, WarriorimageAI, True , 'Warrior')
+AITank = pygameClasses.character(750, 300, 200, 50, 20, TANKimageAI, True , 'Tank')
+AIWarrior2 = pygameClasses.character(870, 450, 150, 70, 10, WarriorimageAI, True , 'Warrior')
 
 characters = {
             "playerChar1" : {"instance" : playerChar1 ,"rank" : "1", "death added?" : "no"},
@@ -439,6 +453,14 @@ def AIturn():
 playerWin = 0 
 aiWin = 0
 # main loop to keep window open (pygame.QUIT is the event type when the cross is pressed)
+
+
+#BGM (Attack)
+PlayBGM("Zak.wav")
+
+
+#END BGM
+
 while running == True:
     if playerWin == 0 and aiWin == 0:
         refreshScreen()
