@@ -2,15 +2,6 @@ import random
 # need to load all this here to make the functions work here so the other page looks cleaner
 import time
 
-
-def PlaySFX(sfx):
-    try:
-        sfx2 =pygame.mixer.Sound(os.path.join(Asset_dir,sfx))
-        sfx2.play()
-    except pygame.error:
-        pass
-
-
 # define all classes here
 class character():
     def __init__(self, x, y, maxHp, Attack, Defense, charImage, status: bool, Class):
@@ -47,7 +38,7 @@ class character():
             self.attack += 20
             self.exp -= 100
             self.rank += 1
-            print("Level up! C")
+            #print("Level up! C")
         
         return [self.alive, self.rank]
 

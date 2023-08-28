@@ -333,7 +333,7 @@ def CheckAliveAll():
         if isinstance(char.checkAliveEXP()[1], int) and j["rank"] != char.rank and char.alive == True:
             game_log.append(f"{char.name} was promoted to rank {char.rank}\n")
             j["rank"] = int(char.rank)
-            print("Level up! Alive")
+            #print("Level up! Alive")
             PlaySFX("levelup.wav")
             
         
@@ -348,11 +348,13 @@ for char in playerList:
     i += 1
     nameChosen = False
     charNameByPlayer = ""
-    screen.fill((0, 0, 0))
+    screen.blit(BGimage, (0, 0))
     modA = False
+
     while nameChosen == False: 
-        show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (255, 255, 255), 120, 100, 40)
-        show_text(str(charNameByPlayer), (255, 255, 255), 250, 300, 70)
+        show_text( "what would you like to name " + str(char.name) + f" (character number {i})", (0, 0, 0), 120, 100, 40)
+        show_text(str(charNameByPlayer), (0, 0, 0), 250, 300, 70)
+
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -372,7 +374,7 @@ for char in playerList:
                     nameChosen = True
                 elif event.key == pygame.K_BACKSPACE:
                     charNameByPlayer = charNameByPlayer[:len(charNameByPlayer) - 1]
-                    screen.fill((0, 0, 0))
+                    screen.blit(BGimage, (0, 0))
                     pygame.display.flip()
                 else:
                     charNameByPlayer = charNameByPlayer + letter
