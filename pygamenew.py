@@ -111,7 +111,18 @@ def Idleloop():
 
     
  #   print(StandTankImg)
-
+def glow(x, y, size, glow_intensity):
+    # Create a surface for the object
+    object_surface = pygame.Surface((size, size), pygame.SRCALPHA)
+    
+    # Draw the object (e.g., a circle)
+    pygame.draw.circle(object_surface, (255, 0, 0), (size // 2, size // 2), size // 2)
+    
+    # Apply a blur effect
+    object_surface = pygame.transform.smoothscale(object_surface, (size + glow_intensity, size + glow_intensity))
+    object_surface.set_alpha(glow_intensity)
+    
+    return object_surface
 
 def ChooseChar(x, y):
     CharChosen = False
@@ -160,6 +171,13 @@ def refreshScreen():
     screen.blit(BGimage, (0,0))
     for char in playerList:
         if char.alive == True:
+            try:
+                if Attacker == char:
+                    #show_text(str("◯"), (255, 0, 0), char.xCoord+5, char.yCoord-30, 350) 
+                    glow_obj = glow(0, 0, 50, 50)
+                    screen.blit(glow_obj, (char.xCoord-7, char.yCoord-5))
+            except NameError:
+                pass 
             screen.blit(char.image, (char.xCoord,char.yCoord))
             show_text(str(char.name).title(), (255, 255, 255), char.xCoord + 10, char.yCoord - 95, 25)
             show_text(str("Rank: ") + str(char.rank), (0, 0, 255), char.xCoord + 10, char.yCoord - 80, 25)
@@ -167,11 +185,7 @@ def refreshScreen():
             show_text(str("EXP: ") + str(char.exp), (0, 0, 255), char.xCoord + 10, char.yCoord - 50, 25)
             show_text(str("ATK: ") + str(char.attack), (0, 0, 255), char.xCoord + 10, char.yCoord - 35, 25)
             show_text(str("DEF: ") + str(char.defense), (0, 0, 255), char.xCoord + 10, char.yCoord - 20, 25)  
-            try:
-                if Attacker == char:
-                    show_text(str("Attacker"), (255, 0, 0), char.xCoord + 10, char.yCoord - 5, 25) 
-            except NameError:
-                pass 
+
         else:
             pass
     for char in AIlist:
